@@ -1,0 +1,9 @@
+{
+  "lolcon": {
+    "host": "",
+    "port": 0,
+    "database": "",
+    "username": "",
+    "password": ""
+  }
+}
