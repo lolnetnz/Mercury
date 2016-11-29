@@ -54,3 +54,6 @@ build
 .classpath
 .project
 build.bat
+Mercury.ipr
+Mercury.iws
+Mercury.iml
