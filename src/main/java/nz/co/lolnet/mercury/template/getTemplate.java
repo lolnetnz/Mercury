@@ -3,8 +3,6 @@ package nz.co.lolnet.mercury.template;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import nz.co.lolnet.mercury.auth.Authentication;
-import nz.co.lolnet.mercury.mysql.PhpbbDatabase;
-import nz.co.lolnet.mercury.util.ConsoleOutput;
 import nz.co.lolnet.mercury.util.Response;
 
 import javax.ws.rs.GET;
@@ -12,10 +10,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  * Created by James on 29/11/2016.
