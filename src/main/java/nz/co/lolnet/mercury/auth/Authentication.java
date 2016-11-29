@@ -1,5 +1,6 @@
 package nz.co.lolnet.mercury.auth;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import nz.co.lolnet.mercury.auth.application.Application;
@@ -10,6 +11,7 @@ public class Authentication {
 	
 	private Application application;
 	private User user;
+	private JsonObject result;
 	
 	public JsonObject authenticateApplication(String uuid, String token, String permission) {
 		if (application == null) {
@@ -17,7 +19,8 @@ public class Authentication {
 		}
 		
 		if (!application.checkCredentials(token)) {
-			return application.getError();
+			result = application.getError();
+			return result;
 		}
 		
 		if (!application.checkPermissions(permission)) {
@@ -29,11 +32,13 @@ public class Authentication {
 		}
 		
 		if (!user.getApplications().contains(uuid)) {
-			return user.getError();
+			result = user.getError();
+			return result;
 		}
 		
 		if (user.checkPermissions(permission)) {
-			return new Response().info("Accepted", "Successfully verified application");
+			result = new Response().info("Accepted", "Successfully verified application");
+			return result;
 		}
 		return user.getError();
 	}
@@ -47,5 +52,15 @@ public class Authentication {
 			return new Response().info("Accepted", "Successfully verified user");
 		}
 		return user.getError();
+	}
+
+	public boolean isauthenticated()
+	{
+		return !result.has("info") || !result.get("info").getAsString().equalsIgnoreCase("Accepted");
+	}
+
+
+	public String getResult() {
+		return new Gson().toJson(result);
 	}
 }

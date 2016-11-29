@@ -21,7 +21,9 @@ import nz.co.lolnet.mercury.util.Response;
 
 @Path("/lolcon/getforumuseridfromdiscordid")
 public class GetForumUserIdFromDiscordId {
-	
+
+	private final String permissionRequired = "LolCon.getForumUserIdFromDiscordId";
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getForumUserIdFromDiscordId() {
@@ -32,12 +34,11 @@ public class GetForumUserIdFromDiscordId {
 	@Path("{discordId}/{applicationUUID}/{applicationToken}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getForumUserIdFromDiscordId(@PathParam("discordId") String discordId, @PathParam("applicationUUID") String applicationUUID, @PathParam("applicationToken") String applicationToken) {
-		JsonObject jsonObject;
 		
 		Authentication authentication = new Authentication();
-		jsonObject = authentication.authenticateApplication(applicationUUID, applicationToken, "LolCon.getForumUserIdFromDiscordId");
-		if (!jsonObject.has("info") || !jsonObject.get("info").getAsString().equalsIgnoreCase("Accepted")) {
-			return new Gson().toJson(jsonObject);
+		authentication.authenticateApplication(applicationUUID, applicationToken, permissionRequired);
+		if (authentication.isauthenticated()) {
+			return authentication.getResult();
 		}
 		
 		try {
@@ -46,8 +47,8 @@ public class GetForumUserIdFromDiscordId {
 			preparedStatement.setString(1, discordId);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			resultSet.next();
-			
-			jsonObject = new JsonObject();
+
+			JsonObject jsonObject = new JsonObject();
 			
 			if (resultSet.getRow() != 0) {
 				jsonObject.addProperty("forumId", resultSet.getString("user_id"));
