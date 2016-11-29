@@ -27,6 +27,16 @@ public class getTemplate {
     }
 
     @GET
+    @Path("{input}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String test(@PathParam("input") String input)
+    {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("myOutput", input);
+        return new Gson().toJson(jsonObject);
+    }
+
+    @GET
     @Path("{ID}/{ID2}/{ID3}/{applicationUUID}/{applicationToken}")
     @Produces(MediaType.APPLICATION_JSON)
     public String getForumUserIdFromDiscordId(@PathParam("ID") String ID1, @PathParam("ID2") String ID2, @PathParam("ID3") String myIDthree
