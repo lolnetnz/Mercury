@@ -56,7 +56,7 @@ public class Authentication {
 
 	public boolean isauthenticated()
 	{
-		return !result.has("info") || !result.get("info").getAsString().equalsIgnoreCase("Accepted");
+		return result.has("info") && result.get("info").getAsString().equalsIgnoreCase("Accepted");
 	}
 
 

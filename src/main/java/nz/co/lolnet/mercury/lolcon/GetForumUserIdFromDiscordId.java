@@ -37,7 +37,7 @@ public class GetForumUserIdFromDiscordId {
 		
 		Authentication authentication = new Authentication();
 		authentication.authenticateApplication(applicationUUID, applicationToken, permissionRequired);
-		if (authentication.isauthenticated()) {
+		if (!authentication.isauthenticated()) {
 			return authentication.getResult();
 		}
 		
