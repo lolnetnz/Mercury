@@ -13,18 +13,19 @@ public class Authentication {
 	private User user;
 	private JsonObject result;
 	
-	public JsonObject authenticateApplication(String uuid, String token, String permission) {
+	public void authenticateApplication(String uuid, String token, String permission) {
 		if (application == null) {
 			application = new Application(uuid);
 		}
 		
 		if (!application.checkCredentials(token)) {
-			result = application.getError();
-			return result;
+			this.result = application.getError();
+			return;
 		}
 		
 		if (!application.checkPermissions(permission)) {
-			return application.getError();
+			this.application.getError();
+			return;
 		}
 		
 		if (user == null) {
@@ -32,34 +33,36 @@ public class Authentication {
 		}
 		
 		if (!user.getApplications().contains(uuid)) {
-			result = user.getError();
-			return result;
+			this.result = user.getError();
+			return;
 		}
 		
 		if (user.checkPermissions(permission)) {
-			result = new Response().info("Accepted", "Successfully verified application");
-			return result;
+			this.result = new Response().info("Accepted", "Successfully verified application");
+			return;
 		}
-		return user.getError();
+		this.result = user.getError();
 	}
 	
-	public JsonObject authenticateUser(String uuid, String token) {
+	public void authenticateUser(String uuid, String token) {
 		if (user == null) {
 			user = new User(uuid);
 		}
 		
 		if (user.checkCredentials(token)) {
-			return new Response().info("Accepted", "Successfully verified user");
+			this.result = new Response().info("Accepted", "Successfully verified user");
+			return;
 		}
-		return user.getError();
+		this.result = user.getError();
 	}
-
-	public boolean isauthenticated()
-	{
-		return result.has("info") && result.get("info").getAsString().equalsIgnoreCase("Accepted");
+	
+	public boolean isAuthenticated() {
+		if (result != null && result.has("info") && result.get("info").getAsString().equalsIgnoreCase("Accepted")) {
+			return true;
+		}
+		return false;
 	}
-
-
+	
 	public String getResult() {
 		return new Gson().toJson(result);
 	}

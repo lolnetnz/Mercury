@@ -11,52 +11,43 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-/**
- * Created by James on 29/11/2016.
- */
 @Path("/template/gettemplate")
 public class getTemplate {
-
+	
     private final String permissionRequired = "template.getTemplate";
-
-
+    
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getTemplate() {
+    public String template() {
         return new Gson().toJson(new Response().error("Bad Request", "Bad request"));
     }
-
+    
     @GET
     @Path("{input}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String test(@PathParam("input") String input)
-    {
+    public String template(@PathParam("input") String input) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("myOutput", input);
         return new Gson().toJson(jsonObject);
     }
-
+    
     @GET
     @Path("{ID}/{ID2}/{ID3}/{applicationUUID}/{applicationToken}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String getForumUserIdFromDiscordId(@PathParam("ID") String ID1, @PathParam("ID2") String ID2, @PathParam("ID3") String myIDthree
-            ,@PathParam("applicationUUID") String applicationUUID, @PathParam("applicationToken") String applicationToken) {
-
+    public String template(@PathParam("ID") String ID1, @PathParam("ID2") String ID2, @PathParam("ID3") String myIDthree, @PathParam("applicationUUID") String applicationUUID, @PathParam("applicationToken") String applicationToken) {
+    	
         //The Authentication bits
         Authentication authentication = new Authentication();
         authentication.authenticateApplication(applicationUUID, applicationToken, permissionRequired);
-        if (!authentication.isauthenticated()) {
+        if (!authentication.isAuthenticated()) {
             return authentication.getResult();
         }
-
-
+        
         //The important bits
         String output = ID1 + " " + ID2 + " " + myIDthree;
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("myOutput", output);
-
-
-
+        
         return new Gson().toJson(jsonObject);
     }
 }

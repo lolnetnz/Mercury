@@ -32,12 +32,10 @@ public class GetPlayerBalance {
 	@Path("{playerName}/{applicationUUID}/{applicationToken}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getPlayerBalance(@PathParam("playerName") String playerName, @PathParam("applicationUUID") String applicationUUID, @PathParam("applicationToken") String applicationToken) {
-		JsonObject jsonObject;
-		
 		Authentication authentication = new Authentication();
-		jsonObject = authentication.authenticateApplication(applicationUUID, applicationToken, "LolCon.GetPlayerBalance");
-		if (!jsonObject.has("info") || !jsonObject.get("info").getAsString().equalsIgnoreCase("Accepted")) {
-			return new Gson().toJson(jsonObject);
+		authentication.authenticateApplication(applicationUUID, applicationToken, "LolCon.GetPlayerBalance");
+		if (!authentication.isAuthenticated()) {
+			return authentication.getResult();
 		}
 		
 		try {
@@ -47,7 +45,7 @@ public class GetPlayerBalance {
 			ResultSet resultSet = preparedStatement.executeQuery();
 			resultSet.next();
 			
-			jsonObject = new JsonObject();
+			JsonObject jsonObject = new JsonObject();
 			jsonObject.addProperty("playerName", playerName);
 			
 			if (resultSet.getRow() != 0) {

@@ -18,26 +18,31 @@ public class User {
 	
 	public boolean checkCredentials(String token) {
 		if (userData == null) {
-			return setError(new Response().error("Not Found", "The server was unable to find a user matching the supplied uuid."));
+			this.error = new Response().error("Not Found", "The server was unable to find a user matching the supplied uuid.");
+			return false;
 		}
 		
 		if (userData.getType() == null || !userData.getType().equals("user") || userData.getToken() == null) {
-			return setError(new Response().error("InternalServerError", "The resource obtained was not of a user."));
+			this.error = new Response().error("InternalServerError", "The resource obtained was not of a user.");
+			return false;
 		}
 		
 		if (userData.getToken().equals(token)) {
 			return true;
 		}
-		return setError(new Response().error("InternalServerError", "The server was unable to verify the users credentials."));
+		this.error = new Response().error("InternalServerError", "The server was unable to verify the users credentials.");
+		return false;
 	}
 	
 	public boolean checkPermissions(String... permissions) {
 		if (userData == null) {
-			return setError(new Response().error("Not Found", "The server was unable to find a user matching the supplied uuid."));
+			this.error = new Response().error("Not Found", "The server was unable to find a user matching the supplied uuid.");
+			return false;
 		}
 		
 		if (userData.getType() == null || !userData.getType().equals("user") || userData.getPermissions() == null) {
-			return setError(new Response().error("InternalServerError", "The resource obtained was not of a user."));
+			this.error = new Response().error("InternalServerError", "The resource obtained was not of a user.");
+			return false;
 		}
 		
 		if (userData.getPermissions().contains("*")) {
@@ -47,21 +52,21 @@ public class User {
 		if (permissions != null) {	
 			for (String permission : permissions) {
 				if (!userData.getPermissions().contains(permission)) {
-					return setError(new Response().error("Forbidden", "The user doesn't not have the necessary permissions to complete this request."));
+					this.error = new Response().error("Forbidden", "The user doesn't not have the necessary permissions to complete this request.");
+					return false;
 				}
 			}
 			return true;
 		}
-		return setError(new Response().error("InternalServerError", "The server was unable to verify the users permissions."));
-	}
-	
-	private boolean setError(JsonObject error) {
-		this.error = error;
+		this.error = new Response().error("InternalServerError", "The server was unable to verify the users permissions.");
 		return false;
 	}
 	
 	public JsonObject getError() {
-		return this.error;
+		if (this.error != null) {
+			return this.error;
+		}
+		return new Response().error("InternalServerError", "No error message provided!");
 	}
 	
 	public List<String> getApplications() {

@@ -34,10 +34,9 @@ public class GetForumUserIdFromDiscordId {
 	@Path("{discordId}/{applicationUUID}/{applicationToken}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getForumUserIdFromDiscordId(@PathParam("discordId") String discordId, @PathParam("applicationUUID") String applicationUUID, @PathParam("applicationToken") String applicationToken) {
-		
 		Authentication authentication = new Authentication();
 		authentication.authenticateApplication(applicationUUID, applicationToken, permissionRequired);
-		if (!authentication.isauthenticated()) {
+		if (!authentication.isAuthenticated()) {
 			return authentication.getResult();
 		}
 		
@@ -47,7 +46,7 @@ public class GetForumUserIdFromDiscordId {
 			preparedStatement.setString(1, discordId);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			resultSet.next();
-
+			
 			JsonObject jsonObject = new JsonObject();
 			
 			if (resultSet.getRow() != 0) {
