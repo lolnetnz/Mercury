@@ -2,7 +2,7 @@ package nz.co.lolnet.mercury.util;
 
 import com.google.gson.JsonObject;
 
-public class Response {
+public class JsonResponse {
 	
 	public JsonObject info(String info, String infoMessage) {
 		JsonObject jsonObject = new JsonObject();

@@ -3,7 +3,7 @@ package nz.co.lolnet.mercury.template;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import nz.co.lolnet.mercury.auth.Authentication;
-import nz.co.lolnet.mercury.util.Response;
+import nz.co.lolnet.mercury.util.JsonResponse;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -19,7 +19,7 @@ public class getTemplate {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String template() {
-        return new Gson().toJson(new Response().error("Bad Request", "Bad request"));
+        return new Gson().toJson(new JsonResponse().error("Bad Request", "Bad request"));
     }
     
     @GET

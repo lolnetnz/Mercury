@@ -1,4 +1,4 @@
-package nz.co.lolnet.mercury.lolcon;
+package nz.co.lolnet.mercury.api.lolcon;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,7 +17,7 @@ import com.google.gson.JsonObject;
 import nz.co.lolnet.mercury.auth.Authentication;
 import nz.co.lolnet.mercury.mysql.LolConDatabase;
 import nz.co.lolnet.mercury.util.ConsoleOutput;
-import nz.co.lolnet.mercury.util.Response;
+import nz.co.lolnet.mercury.util.JsonResponse;
 
 @Path("/lolcon/getplayerbalance")
 public class GetPlayerBalance {
@@ -25,7 +25,7 @@ public class GetPlayerBalance {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getPlayerBalance() {
-		return new Gson().toJson(new Response().error("Bad Request", "Bad request"));
+		return new Gson().toJson(new JsonResponse().error("Bad Request", "Bad request"));
 	}
 	
 	@GET
@@ -59,6 +59,6 @@ public class GetPlayerBalance {
 			ConsoleOutput.error("Encountered an error processing 'getPlayerBalance " + playerName + "' - SQLException");
 			ex.printStackTrace();
 		}
-		return new Gson().toJson(new Response().error("InternalServerError", "Unable to process request."));
+		return new Gson().toJson(new JsonResponse().error("InternalServerError", "Unable to process request."));
 	}
 }

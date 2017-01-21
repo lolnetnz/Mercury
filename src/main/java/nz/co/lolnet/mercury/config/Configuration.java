@@ -22,7 +22,7 @@ public class Configuration {
 	public final File configFile = new File(mercuryFile.getAbsolutePath() + "/config.json");
 	
 	public JsonObject lolcon;
-	public JsonObject phpbb;
+	public JsonObject forum;
 	
 	public void loadConfig() {
 		try {
@@ -39,7 +39,7 @@ public class Configuration {
 			JsonObject jsonObject = new JsonParser().parse(new String(Files.readAllBytes(Paths.get(configFile.getAbsolutePath())), StandardCharsets.UTF_8)).getAsJsonObject();
 			
 			lolcon = jsonObject.get("lolcon").getAsJsonObject();
-			phpbb = jsonObject.get("phpbb").getAsJsonObject();
+			forum = jsonObject.get("forum").getAsJsonObject();
 			
 			ConsoleOutput.info("Successfully loaded configuration file.");
 		} catch (IllegalStateException | InvalidPathException | IOException | JsonParseException | NullPointerException | OutOfMemoryError | SecurityException | UnsupportedOperationException ex) {

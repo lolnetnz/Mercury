@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 
 import nz.co.lolnet.mercury.auth.application.Application;
 import nz.co.lolnet.mercury.auth.user.User;
-import nz.co.lolnet.mercury.util.Response;
+import nz.co.lolnet.mercury.util.JsonResponse;
 
 public class Authentication {
 	
@@ -38,7 +38,7 @@ public class Authentication {
 		}
 		
 		if (user.checkPermissions(permission)) {
-			this.result = new Response().info("Accepted", "Successfully verified application");
+			this.result = new JsonResponse().info("Accepted", "Successfully verified application");
 			return;
 		}
 		this.result = user.getError();
@@ -50,7 +50,7 @@ public class Authentication {
 		}
 		
 		if (user.checkCredentials(token)) {
-			this.result = new Response().info("Accepted", "Successfully verified user");
+			this.result = new JsonResponse().info("Accepted", "Successfully verified user");
 			return;
 		}
 		this.result = user.getError();

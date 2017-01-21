@@ -1,3 +1,4 @@
+apply plugin: "java"
 apply plugin: "war"
 
 targetCompatibility = 1.8
@@ -20,5 +21,8 @@ dependencies {
 }
 
 war {
+  from {
+    ["LICENSE"]
+  }
   archiveName "root.war"
 }
