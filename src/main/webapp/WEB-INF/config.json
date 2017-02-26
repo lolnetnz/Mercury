@@ -1,16 +1,19 @@
 {
-  "lolcon": {
-    "host": "",
-    "port": 0,
-    "database": "",
-    "username": "",
-    "password": ""
-  },
-  "forum": {
-    "host": "",
-    "port": 0,
-    "database": "",
-    "username": "",
-    "password": ""
-  }
+    "debug": true,
+    "accounts": {
+        "uniqueId": {
+            "name": "",
+            "token": "",
+            "permissions": []
+        }
+    },
+    "databases": {
+        "uniqueId": {
+            "host": "",
+            "port": 3306,
+            "database": "",
+            "username": "",
+            "password": ""
+        }
+    }
 }

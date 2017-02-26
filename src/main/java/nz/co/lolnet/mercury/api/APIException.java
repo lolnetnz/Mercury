@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Alex Thomson
+ * Copyright 2017 lolnet.co.nz
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,19 +23,21 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import com.google.gson.Gson;
-
+import nz.co.lolnet.mercury.util.ConsoleOutput;
 import nz.co.lolnet.mercury.util.JsonResponse;
 
 @Provider
 public class APIException implements ExceptionMapper<Throwable> {
-
+	
 	@Override
 	public Response toResponse(Throwable throwable) {
+		
+		ConsoleOutput.error("Exception - " + throwable.getClass().getName());
+		
 		if (!(throwable instanceof ClientErrorException)) {
 			return Response
 					.status(Status.INTERNAL_SERVER_ERROR)
-					.entity(new Gson().toJson(new JsonResponse().error("Internal Server Error", throwable.getMessage())))
+					.entity(JsonResponse.error("Internal Server Error", throwable.getMessage()))
 					.type(MediaType.APPLICATION_JSON)
 					.build();
 		}
@@ -43,7 +45,7 @@ public class APIException implements ExceptionMapper<Throwable> {
 		ClientErrorException clientErrorException = (ClientErrorException) throwable;
 		return Response
 				.status(clientErrorException.getResponse().getStatus())
-				.entity(new Gson().toJson(new JsonResponse().error(clientErrorException.getResponse().getStatusInfo().getReasonPhrase(), clientErrorException.getMessage())))
+				.entity(JsonResponse.error(clientErrorException.getResponse().getStatusInfo().getReasonPhrase(), clientErrorException.getMessage()))
 				.type(MediaType.APPLICATION_JSON)
 				.build();
 	}
