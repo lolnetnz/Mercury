@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nz.co.lolnet.mercury.util;
+package nz.co.lolnet.mercury.util.JamesPlayerGround;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -81,7 +81,6 @@ public class JamesPlayGround {
         System.out.println(decrypt(key, encrypt(key, "Hello World")));
         
         JsonParser parser = new JsonParser();
-        JsonObject jsonObject2 = parser.parse(input).getAsJsonObject();
         System.out.println(jsonObject.toString());
         boolean output = jsonObject.get("hello").getAsBoolean();
         System.out.println(output);

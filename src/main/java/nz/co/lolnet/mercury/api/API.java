@@ -28,13 +28,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import java.util.ArrayList;
 import java.util.List;
-import javax.ws.rs.PathParam;
-import org.json.simple.JSONObject;
 
 @Path("/")
 public class API {
 
-    List<APIRequest> APIRequest = new ArrayList<>();
     
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -56,45 +53,5 @@ public class API {
         jsonObject.addProperty("Application-Author", "lolnet.co.nz");
         return new Gson().toJson(jsonObject);
     }
-
-    @GET
-    @Path("{request}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response doGet(@PathParam("request") String request) {
-        
-        setupAPIRequest();
-        
-        // decypt message
-        // obtain JSONObject from decypted message
-        
-        /*
-        String request = Json.get("Request")
-        Object input = Json.get("input"); // can be null
-        
-        */
-        
-        
-        
-        
-        Object output = null;
-        String input = "james137137";
-        for (APIRequest aPIRequest : APIRequest) {
-            if (aPIRequest.getRequestName().equalsIgnoreCase(request))
-            {
-                aPIRequest.acceptInputs(input);
-                output = aPIRequest.run();
-            }
-        }
-        
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("request", request);
-        jsonObject.put("output", output);
-        return Response.status(Status.OK).entity(new Gson().toJson(jsonObject)).build();
-    }
-
-    private void setupAPIRequest() {
-        APIRequest.add(new nz.co.lolnet.mercury.api.example.Example());
-        APIRequest.add(new nz.co.lolnet.mercury.api.example.getPlayerBalance());
-        APIRequest.add(new nz.co.lolnet.mercury.api.example.getPlayerNick());
-    }
+    
 }
