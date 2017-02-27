@@ -95,5 +95,6 @@ public class API {
     private void setupAPIRequest() {
         APIRequest.add(new nz.co.lolnet.mercury.api.example.Example());
         APIRequest.add(new nz.co.lolnet.mercury.api.example.getPlayerBalance());
+        APIRequest.add(new nz.co.lolnet.mercury.api.example.getPlayerNick());
     }
 }
