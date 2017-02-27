@@ -81,12 +81,12 @@ public class AddTempCommand {
             ps = conn.prepareStatement("INSERT INTO `TempCommandDatabase`(`PlayerName`, `packageName`) VALUES (?,?);");
             ps.setString(1, playerName);
             ps.setString(2, packageName);
-            ps.executeQuery();
+            ps.executeUpdate();
 
             success = true;
 
         } catch (SQLException ex) {
-            ConsoleOutput.error("Encountered an error processing 'getPlayerBalance " + playerName + "' - SQLException");
+            ConsoleOutput.error("Encountered an error processing 'TempCommandDatabase " + playerName  + "," + packageName+ "' - SQLException");
             ex.printStackTrace();
         } finally {
 
