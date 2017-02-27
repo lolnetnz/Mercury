@@ -83,7 +83,7 @@ public class ChangePlayerName {
             success = true;
 
         } catch (SQLException ex) {
-            ConsoleOutput.error("Encountered an error processing 'getPlayerBalance " + playerName + "' - SQLException");
+            ConsoleOutput.error("Encountered an error processing 'changeplayername " + playerName + "," + playerUUID + "' - SQLException");
             ex.printStackTrace();
         } finally {
 

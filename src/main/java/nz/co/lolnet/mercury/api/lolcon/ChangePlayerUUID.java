@@ -83,7 +83,7 @@ public class ChangePlayerUUID {
             success = true;
 
         } catch (SQLException ex) {
-            ConsoleOutput.error("Encountered an error processing 'getPlayerBalance " + playerName + "' - SQLException");
+            ConsoleOutput.error("Encountered an error processing 'ChangePlayerUUID " + playerName + "," + playerUUID + "' - SQLException");
             ex.printStackTrace();
         } finally {
 
