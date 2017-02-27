@@ -79,7 +79,7 @@ public class ChangePlayerUUID {
             ps = conn.prepareStatement("UPDATE `player` SET `playeruuid` = ? WHERE `playerName`=?;");
             ps.setString(1, playerUUID);
             ps.setString(2, playerName);
-            ps.executeQuery();
+            ps.executeUpdate();
             success = true;
 
         } catch (SQLException ex) {

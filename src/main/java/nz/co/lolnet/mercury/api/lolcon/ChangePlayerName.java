@@ -78,7 +78,7 @@ public class ChangePlayerName {
             ps = conn.prepareStatement("UPDATE `player` SET `playerName`= ? WHERE `playeruuid`=?;");
             ps.setString(1, playerName);
             ps.setString(2, playerUUID);
-            ps.executeQuery();
+            ps.executeUpdate();
 
             success = true;
 
