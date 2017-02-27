@@ -18,4 +18,6 @@ public interface APIRequest {
     public String getPermission();
     
     public String getOutputClassName();
+    
+    public void acceptInputs(Object input);
 }

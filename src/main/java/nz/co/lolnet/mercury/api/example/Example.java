@@ -32,6 +32,10 @@ public class Example implements APIRequest{
     public String getOutputClassName() {
        return String.class.getCanonicalName();
     }
+
+    @Override
+    public void acceptInputs(Object input) {
+    }
     
     
     
