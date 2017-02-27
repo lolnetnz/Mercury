@@ -1,24 +1,36 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2017 lolnet.co.nz
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package nz.co.lolnet.mercury.api.lolcon;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 import nz.co.lolnet.mercury.Mercury;
 import nz.co.lolnet.mercury.authentication.Authentication;
 import nz.co.lolnet.mercury.entries.Data;
@@ -26,10 +38,6 @@ import nz.co.lolnet.mercury.mysql.MySQL;
 import nz.co.lolnet.mercury.util.ConsoleOutput;
 import nz.co.lolnet.mercury.util.JsonResponse;
 
-/**
- *
- * @author James
- */
 @Path("/lolcon/addtempcommand")
 public class AddTempCommand {
 
