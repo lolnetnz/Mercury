@@ -57,3 +57,8 @@ build.bat
 Mercury.ipr
 Mercury.iws
 Mercury.iml
+
+#maven
+
+pom.xml
+/target/

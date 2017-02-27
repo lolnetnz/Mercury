@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package nz.co.lolnet.mercury.api;
 
 import javax.ws.rs.Consumes;
@@ -27,28 +26,56 @@ import javax.ws.rs.core.Response.Status;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import java.util.ArrayList;
+import java.util.List;
+import javax.ws.rs.PathParam;
+import org.json.simple.JSONObject;
 
 @Path("/")
 public class API {
-	
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response doGet() {
-		return Response.status(Status.OK).entity(getMercuryInformation()).build();
-	}
-	
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response doPost() {
-		return Response.status(Status.OK).entity(getMercuryInformation()).build();
-	}
-	
-	private String getMercuryInformation() {
-		JsonObject jsonObject = new JsonObject();
-		jsonObject.addProperty("Application-Title", "Mercury");
-		jsonObject.addProperty("Application-Version", "0.0.1-ALPHA");
-		jsonObject.addProperty("Application-Author", "lolnet.co.nz");
-		return new Gson().toJson(jsonObject);
-	}
+
+    List<APIRequest> APIRequest = new ArrayList<>();
+    
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response doGet() {
+        return Response.status(Status.OK).entity(getMercuryInformation()).build();
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response doPost() {
+        return Response.status(Status.OK).entity(getMercuryInformation()).build();
+    }
+
+    private String getMercuryInformation() {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("Application-Title", "Mercury");
+        jsonObject.addProperty("Application-Version", "0.0.1-ALPHA");
+        jsonObject.addProperty("Application-Author", "lolnet.co.nz");
+        return new Gson().toJson(jsonObject);
+    }
+
+    @GET
+    @Path("{request}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response doGet(@PathParam("request") String request) {
+        setupAPIRequest();
+        Object output = null;
+        for (APIRequest aPIRequest : APIRequest) {
+            if (aPIRequest.getRequestName().equalsIgnoreCase(request))
+            {
+                output = aPIRequest.run();
+            }
+        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("request", request);
+        jsonObject.put("output", output);
+        return Response.status(Status.OK).entity(new Gson().toJson(jsonObject)).build();
+    }
+
+    private void setupAPIRequest() {
+        APIRequest.add(new nz.co.lolnet.mercury.api.example.Example());
+    }
 }
