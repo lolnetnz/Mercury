@@ -73,11 +73,19 @@ public class GetPlayerBalance {
 		
 		String playerName = jsonObject.get("playerName").getAsString();
 		
+		MySQL mysql = new MySQL(Mercury.getInstance().getConfig().getDatabases().get("lolcon"));
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
 		try {
-			Connection connection = new MySQL(Mercury.getInstance().getConfig().getDatabases().get("lolcon")).getMySQLConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement("SELECT `lolcoins` FROM `player` WHERE `playerName`=? LIMIT 0 , 1");
+			connection = mysql.getMySQLConnection();
+			if (connection == null) {
+				throw new SQLException("Connection is null!");
+			}
+			
+			preparedStatement = connection.prepareStatement("SELECT `lolcoins` FROM `player` WHERE `playerName`=? LIMIT 0 , 1");
 			preparedStatement.setString(1, playerName);
-			ResultSet resultSet = preparedStatement.executeQuery();
+			resultSet = preparedStatement.executeQuery();
 			resultSet.next();
 			
 			jsonObject = new JsonObject();
@@ -90,10 +98,15 @@ public class GetPlayerBalance {
 			}
 			
 			data.setMessage(authentication.doEncrypt(new Gson().toJson(jsonObject)));
+			jsonObject = null;
+			
 			return Response.status(Status.OK).entity(new Gson().toJson(data)).build();
 		} catch (SQLException ex) {
 			ConsoleOutput.error("Encountered an error processing 'getPlayerBalance " + playerName + "' - SQLException");
 			ex.printStackTrace();
+		} finally {
+			mysql.closeMySQL(connection, preparedStatement, resultSet);
+			mysql = null;
 		}
 		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(JsonResponse.error("InternalServerError", "Unable to process request.")).build();
 	}
