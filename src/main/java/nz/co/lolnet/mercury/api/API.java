@@ -61,14 +61,31 @@ public class API {
     @Path("{request}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response doGet(@PathParam("request") String request) {
+        
         setupAPIRequest();
+        
+        // decypt message
+        // obtain JSONObject from decypted message
+        
+        /*
+        String request = Json.get("Request")
+        Object input = Json.get("input"); // can be null
+        
+        */
+        
+        
+        
+        
         Object output = null;
+        String input = "james137137";
         for (APIRequest aPIRequest : APIRequest) {
             if (aPIRequest.getRequestName().equalsIgnoreCase(request))
             {
+                aPIRequest.acceptInputs(input);
                 output = aPIRequest.run();
             }
         }
+        
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("request", request);
         jsonObject.put("output", output);
@@ -77,5 +94,6 @@ public class API {
 
     private void setupAPIRequest() {
         APIRequest.add(new nz.co.lolnet.mercury.api.example.Example());
+        APIRequest.add(new nz.co.lolnet.mercury.api.example.getPlayerBalance());
     }
 }
