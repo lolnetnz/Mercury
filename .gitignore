@@ -60,5 +60,5 @@ Mercury.iml
 
 #maven
 
-pom.xml
 /target/
+/webapps/
