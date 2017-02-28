@@ -32,7 +32,7 @@ import nz.co.lolnet.mercury.util.JsonResponse;
  * @author James
  */
 @Path("/lolcon/getforumgroup")
-public class getForumGroups {
+public class GetForumGroups {
     private final String permission = "LolCon.getfourmgroup";
 
     @GET
