@@ -17,6 +17,8 @@
 package nz.co.lolnet.mercury.mysql;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
@@ -58,7 +60,33 @@ public class MySQL {
 		return null;
 	}
 	
-	private Database getDatabase() {
+	public void closeMySQL(Connection connection, PreparedStatement preparedStatement, ResultSet resultSet) {
+		try {
+			if (resultSet != null) {
+				resultSet.close();
+			}
+		} catch (SQLException ex) {
+			ConsoleOutput.debug("Failed to close resultSet.");
+		}
+		
+		try {
+			if (preparedStatement != null) {
+				preparedStatement.close();
+			}
+		} catch (SQLException ex) {
+			ConsoleOutput.debug("Failed to close preparedStatement.");
+		}
+		
+		try {
+			if (connection != null) {
+				connection.close();
+			}
+		} catch (SQLException ex) {
+			ConsoleOutput.debug("Failed to close connection.");
+		}
+	}
+	
+	public Database getDatabase() {
 		return database;
 	}
 }

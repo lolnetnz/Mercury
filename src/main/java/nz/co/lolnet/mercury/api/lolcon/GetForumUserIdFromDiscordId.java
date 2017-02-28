@@ -73,11 +73,15 @@ public class GetForumUserIdFromDiscordId {
 		
 		String discordId = jsonObject.get("discordId").getAsString();
 		
+		MySQL mysql = new MySQL(Mercury.getInstance().getConfig().getDatabases().get("forum"));
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
 		try {
-			Connection connection = new MySQL(Mercury.getInstance().getConfig().getDatabases().get("forum")).getMySQLConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement("SELECT `user_id` FROM `xenforo.xf_user_field_value` WHERE `field_id`='discordid' AND `field_value`=? LIMIT 0 , 1");
+			connection = mysql.getMySQLConnection();
+			preparedStatement = connection.prepareStatement("SELECT `user_id` FROM `xenforo.xf_user_field_value` WHERE `field_id`='discordid' AND `field_value`=? LIMIT 0 , 1");
 			preparedStatement.setString(1, discordId);
-			ResultSet resultSet = preparedStatement.executeQuery();
+			resultSet = preparedStatement.executeQuery();
 			resultSet.next();
 			
 			jsonObject = new JsonObject();
@@ -90,10 +94,15 @@ public class GetForumUserIdFromDiscordId {
 			}
 			
 			data.setMessage(authentication.doEncrypt(new Gson().toJson(jsonObject)));
+			jsonObject = null;
+			
 			return Response.status(Status.OK).entity(new Gson().toJson(data)).build();
 		} catch (SQLException ex) {
 			ConsoleOutput.error("Encountered an error processing 'getForumUserIdFromDiscordId " + discordId + "' - SQLException");
 			ex.printStackTrace();
+		} finally {
+			mysql.closeMySQL(connection, preparedStatement, resultSet);
+			mysql = null;
 		}
 		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(JsonResponse.error("InternalServerError", "Unable to process request.")).build();
 	}

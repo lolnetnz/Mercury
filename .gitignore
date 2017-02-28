@@ -46,20 +46,25 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-# Project files
-.gradle
+# Eclipse
 .settings
-bin
-build
 .classpath
 .project
+
+# Gradle
+.gradle
+bin
+build
 build.bat
+
+# Maven
+target
+webapps
+
+# NetBeans
+nb-configuration.xml
+
+# Project
 Mercury.ipr
 Mercury.iws
 Mercury.iml
-
-#maven
-
-/target/
-/webapps/
-nb-configuration.xml

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package nz.co.lolnet.mercury.api;
 
 import javax.ws.rs.Consumes;
@@ -26,26 +27,23 @@ import javax.ws.rs.core.Response.Status;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import java.util.ArrayList;
-import java.util.List;
 
 @Path("/")
 public class API {
-
-    
-    @GET
+	
+	@GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response doGet() {
         return Response.status(Status.OK).entity(getMercuryInformation()).build();
     }
-
+	
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response doPost() {
         return Response.status(Status.OK).entity(getMercuryInformation()).build();
     }
-
+    
     private String getMercuryInformation() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("Application-Title", "Mercury");
@@ -53,5 +51,4 @@ public class API {
         jsonObject.addProperty("Application-Author", "lolnet.co.nz");
         return new Gson().toJson(jsonObject);
     }
-    
 }
