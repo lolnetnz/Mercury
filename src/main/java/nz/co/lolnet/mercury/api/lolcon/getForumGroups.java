@@ -6,14 +6,11 @@
 package nz.co.lolnet.mercury.api.lolcon;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -23,7 +20,6 @@ import javax.ws.rs.core.Response;
 import nz.co.lolnet.mercury.Mercury;
 import nz.co.lolnet.mercury.authentication.Authentication;
 import nz.co.lolnet.mercury.entries.Data;
-import nz.co.lolnet.mercury.entries.Database;
 import nz.co.lolnet.mercury.mysql.MySQL;
 import nz.co.lolnet.mercury.util.ConsoleOutput;
 import nz.co.lolnet.mercury.util.JsonResponse;
