@@ -23,6 +23,7 @@ import javax.ws.rs.core.Response;
 import nz.co.lolnet.mercury.Mercury;
 import nz.co.lolnet.mercury.authentication.Authentication;
 import nz.co.lolnet.mercury.entries.Data;
+import nz.co.lolnet.mercury.entries.Database;
 import nz.co.lolnet.mercury.mysql.MySQL;
 import nz.co.lolnet.mercury.util.ConsoleOutput;
 import nz.co.lolnet.mercury.util.JsonResponse;
@@ -45,7 +46,8 @@ public class GetForumGroups {
     @Path("{request}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response doGet(@PathParam("request") String request) {
-
+        
+        String forumGroups = "";
         Authentication authentication = new Authentication();
         Response response = authentication.checkAuthentication(request, permission);
 
@@ -58,38 +60,25 @@ public class GetForumGroups {
             data.setMessage(authentication.doEncrypt(JsonResponse.error("Internal Server Error", "Invalid response")));
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(new Gson().toJson(data)).build();
         }
-        JsonObject jsonObject = (JsonObject) response.getEntity();
-        if (!jsonObject.has("playerName")) {
-            data.setMessage(authentication.doEncrypt(JsonResponse.error("Bad Request", "Request is missing 'playerName'")));
-            return Response.status(Response.Status.BAD_REQUEST).entity(new Gson().toJson(data)).build();
-        }
-        if (!jsonObject.has("playerUUID")) {
-            data.setMessage(authentication.doEncrypt(JsonResponse.error("Bad Request", "Request is missing 'playerUUID'")));
-            return Response.status(Response.Status.BAD_REQUEST).entity(new Gson().toJson(data)).build();
-        }
-
-        String playerName = jsonObject.get("playerName").getAsString();
-        String playerUUID = jsonObject.get("playerUUID").getAsString();
+        JsonObject jsonObject;
 
         boolean success = false;
-        JsonArray forumGroups = new JsonArray();
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-
-            conn = new MySQL(Mercury.getInstance().getConfig().getDatabases().get("lolcon")).getMySQLConnection();
+            conn = new MySQL(Mercury.getInstance().getConfig().getDatabases().get("forum")).getMySQLConnection();
             ps = conn.prepareStatement("SELECT `user_group_id`,`title` FROM xenforo.xf_user_group;");
             rs = ps.executeQuery();
             while (rs.next())
             {
-                String groupName = rs.getString("user_group_id");
-                if (groupName != null) forumGroups.add(groupName);
+                
+                int groupID = rs.getInt("user_group_id");
+                if (groupID > 0) forumGroups += groupID + "~";
             }
             success = true;
-
         } catch (SQLException ex) {
-            ConsoleOutput.error("Encountered an error processing 'changeplayername " + playerName + "," + playerUUID + "' - SQLException");
+            ConsoleOutput.error("Encountered an error processing 'getforumgroup' - SQLException");
             ex.printStackTrace();
         } finally {
 
@@ -117,7 +106,9 @@ public class GetForumGroups {
 
         }
         if (success) {
-            data.setMessage(authentication.doEncrypt(new Gson().toJson(forumGroups)));
+            jsonObject = new JsonObject();
+            jsonObject.addProperty("forumGroups", forumGroups);
+            data.setMessage(authentication.doEncrypt(new Gson().toJson(jsonObject)));
             return Response.status(Response.Status.OK).entity(new Gson().toJson(data)).build();
         } else {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(JsonResponse.error("InternalServerError",
