@@ -59,7 +59,7 @@ public class GetForumUserForumGroups {
         }
 
         JsonObject jsonObject = (JsonObject) response.getEntity();
-        if (!jsonObject.has("userforumid")) {
+        if (!jsonObject.has("userForumID")) {
             data.setMessage(authentication.doEncrypt(JsonResponse.error("Bad Request", "Request is missing 'userforumid'")));
             return Response.status(Response.Status.BAD_REQUEST).entity(new Gson().toJson(data)).build();
         }
