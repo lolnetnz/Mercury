@@ -38,7 +38,7 @@ import nz.co.lolnet.mercury.mysql.MySQL;
 import nz.co.lolnet.mercury.util.JsonResponse;
 import nz.co.lolnet.mercury.util.LogHelper;
 
-@Path("/lolcon/getforumuseridfromdiscordid")
+@Path("/forum/getforumuseridfromdiscordid")
 public class GetForumUserIdFromDiscordId implements IEndpoint {
 	
 	@Override

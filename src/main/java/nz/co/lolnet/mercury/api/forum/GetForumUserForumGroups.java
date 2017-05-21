@@ -39,7 +39,7 @@ import nz.co.lolnet.mercury.mysql.MySQL;
 import nz.co.lolnet.mercury.util.JsonResponse;
 import nz.co.lolnet.mercury.util.LogHelper;
 
-@Path("/lolcon/getforumuserforumgroups")
+@Path("/forum/getforumuserforumgroups")
 public class GetForumUserForumGroups implements IEndpoint {
 	
 	@Override
