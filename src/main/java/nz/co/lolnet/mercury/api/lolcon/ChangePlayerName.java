@@ -18,7 +18,6 @@ package nz.co.lolnet.mercury.api.lolcon;
 
 import java.sql.SQLException;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -52,7 +51,6 @@ public class ChangePlayerName implements IEndpoint {
 	}
 	
 	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response doPost(String request) {
 		Authentication authentication = new Authentication();

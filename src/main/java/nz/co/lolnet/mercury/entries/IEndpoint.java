@@ -16,7 +16,6 @@
 
 package nz.co.lolnet.mercury.entries;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Produces;
@@ -30,7 +29,6 @@ public interface IEndpoint {
 	public Response doGet();
 	
 	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response doPost();
 	

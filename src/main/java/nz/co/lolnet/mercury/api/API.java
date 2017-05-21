@@ -29,23 +29,23 @@ import nz.co.lolnet.mercury.entries.IEndpoint;
 public class API implements IEndpoint {
 	
 	@Override
-    public Response doGet() {
-        return Response.status(Status.OK).entity(getMercuryInformation()).build();
-    }
+	public Response doGet() {
+		return Response.status(Status.OK).entity(getMercuryInformation()).build();
+	}
 	
 	@Override
-    public Response doPost() {
-        return Response.status(Status.OK).entity(getMercuryInformation()).build();
-    }
-    
-    private String getMercuryInformation() {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("Application-Title", "Mercury");
-        jsonObject.addProperty("Application-Version", "0.0.1-ALPHA");
-        jsonObject.addProperty("Application-Author", "lolnet.co.nz");
-        return new Gson().toJson(jsonObject);
-    }
-    
+	public Response doPost() {
+		return Response.status(Status.OK).entity(getMercuryInformation()).build();
+	}
+	
+	private String getMercuryInformation() {
+		JsonObject jsonObject = new JsonObject();
+		jsonObject.addProperty("Application-Title", "Mercury");
+		jsonObject.addProperty("Application-Version", "0.0.1-ALPHA");
+		jsonObject.addProperty("Application-Author", "lolnet.co.nz");
+		return new Gson().toJson(jsonObject);
+	}
+	
 	@Override
 	public String getPermission() {
 		return null;
