@@ -23,7 +23,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import nz.co.lolnet.mercury.util.ConsoleOutput;
+import nz.co.lolnet.mercury.util.LogHelper;
 import nz.co.lolnet.mercury.util.JsonResponse;
 
 @Provider
@@ -31,8 +31,7 @@ public class APIException implements ExceptionMapper<Throwable> {
 	
 	@Override
 	public Response toResponse(Throwable throwable) {
-		
-		ConsoleOutput.error("Exception - " + throwable.getClass().getName());
+		LogHelper.error("Encountered an error processing in '" + getClass().getSimpleName() + "' - " + throwable.getMessage());
 		
 		if (!(throwable instanceof ClientErrorException)) {
 			return Response

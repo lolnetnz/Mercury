@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package nz.co.lolnet.mercury.api.lolcon;
+package nz.co.lolnet.mercury.api.forum;
 
 import java.sql.SQLException;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import nz.co.lolnet.mercury.Mercury;
@@ -38,23 +39,18 @@ import nz.co.lolnet.mercury.mysql.MySQL;
 import nz.co.lolnet.mercury.util.JsonResponse;
 import nz.co.lolnet.mercury.util.LogHelper;
 
-@Path("/lolcon/changeplayername")
-public class ChangePlayerName implements IEndpoint {
+@Path("/lolcon/getforumgroup")
+public class GetForumGroups implements IEndpoint {
 	
 	@Override
 	public Response doGet() {
-		return Response.status(Status.METHOD_NOT_ALLOWED).entity(JsonResponse.error("Method not allowed", "Method not allowed")).build();
-	}
-	
-	@Override
-	public Response doPost() {
 		return Response.status(Status.BAD_REQUEST).entity(JsonResponse.error("Bad Request", "Bad request")).build();
 	}
 	
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
+	@GET
+	@Path("{request}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response doPost(String request) {
+	public Response doGet(@PathParam("request") String request) {
 		Authentication authentication = new Authentication();
 		Response response = authentication.checkAuthentication(request, getPermission());
 		
@@ -69,26 +65,23 @@ public class ChangePlayerName implements IEndpoint {
 		}
 		
 		JsonObject jsonObject = (JsonObject) response.getEntity();
-		if (!jsonObject.has("playerName") || !jsonObject.has("playerUUID")) {
-			data.setMessage(authentication.doEncrypt(JsonResponse.error("Bad Request", "Request is missing required arguments")));
-			return Response.status(Status.BAD_REQUEST).entity(new Gson().toJson(data)).build();
-		}
-		
-		String playerName = jsonObject.get("playerName").getAsString();
-		String playerUUID = jsonObject.get("playerUUID").getAsString();
-		
-		try (MySQL mysql = new MySQL(Mercury.getInstance().getConfig().getDatabases().get(Databases.LOLCON))){
+		try (MySQL mysql = new MySQL(Mercury.getInstance().getConfig().getDatabases().get(Databases.FORUM))) {
 			mysql.createConnection();
-			mysql.setPreparedStatement(mysql.getConnection().prepareStatement("UPDATE `player` SET `playerName`= ? WHERE `playeruuid`=?;"));
-			mysql.getPreparedStatement().setString(1, playerName);
-			mysql.getPreparedStatement().setString(2, playerUUID);
-			mysql.getPreparedStatement().executeUpdate();
+			mysql.setPreparedStatement(mysql.getConnection().prepareStatement("SELECT `user_group_id`, `title` FROM `xenforo.xf_user_group`;"));
+			mysql.setResultSet(mysql.getPreparedStatement().executeQuery());
 			
-			jsonObject = new JsonObject();
-			jsonObject.addProperty("status", true);
+			JsonArray jsonArray = new JsonArray();
+			while (mysql.getResultSet().next()) {
+				int groupId = mysql.getResultSet().getInt("user_group_id");
+				if (groupId > 0) {
+					jsonArray.add(groupId);
+				}
+			}
+			
+			jsonObject.add("forumGroups", jsonArray);
 			data.setMessage(authentication.doEncrypt(new Gson().toJson(jsonObject)));
+			jsonArray = null;
 			jsonObject = null;
-			
 			return Response.status(Status.OK).entity(new Gson().toJson(data)).build();
 		} catch (SQLException ex) {
 			LogHelper.error("Encountered an error processing in '" + getClass().getSimpleName() + "' - " + ex.getMessage());
@@ -98,7 +91,12 @@ public class ChangePlayerName implements IEndpoint {
 	}
 	
 	@Override
+	public Response doPost() {
+		return Response.status(Status.METHOD_NOT_ALLOWED).entity(JsonResponse.error("Method not allowed", "Method not allowed")).build();
+	}
+	
+	@Override
 	public String getPermission() {
-		return "LolCon.ChangePlayerName";
+		return "Forum.GetFourmGroup";
 	}
 }

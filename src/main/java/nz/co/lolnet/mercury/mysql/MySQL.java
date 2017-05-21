@@ -25,11 +25,14 @@ import com.mysql.cj.jdbc.MysqlDataSource;
 
 import nz.co.lolnet.mercury.Mercury;
 import nz.co.lolnet.mercury.entries.Database;
-import nz.co.lolnet.mercury.util.ConsoleOutput;
+import nz.co.lolnet.mercury.util.LogHelper;
 
-public class MySQL {
+public class MySQL implements AutoCloseable {
 	
 	private final Database database;
+	private Connection connection;
+	private PreparedStatement preparedStatement;
+	private ResultSet resultSet;
 	
 	@Deprecated
 	public MySQL(String database) {
@@ -40,53 +43,68 @@ public class MySQL {
 		this.database = database;
 	}
 	
-	public Connection getMySQLConnection() {
+	public void createConnection() throws SQLException {
 		if (getDatabase() == null) {
-			return null;
+			throw new SQLException("Database is null!");
 		}
 		
-		try {
-			MysqlDataSource mysqlDataSource = new MysqlDataSource();
-			mysqlDataSource.setServerName(getDatabase().getHost());
-			mysqlDataSource.setPort(getDatabase().getPort());
-			mysqlDataSource.setDatabaseName(getDatabase().getDatabase());
-			mysqlDataSource.setUser(getDatabase().getUsername());
-			mysqlDataSource.setPassword(getDatabase().getPassword());
-			return mysqlDataSource.getConnection();
-		} catch (SQLException ex) {
-			ConsoleOutput.error("Exception getting connection to MySQL database!");
-			ex.printStackTrace();
-		}
-		return null;
+		MysqlDataSource mysqlDataSource = new MysqlDataSource();
+		mysqlDataSource.setServerName(getDatabase().getHost());
+		mysqlDataSource.setPort(getDatabase().getPort());
+		mysqlDataSource.setDatabaseName(getDatabase().getDatabase());
+		mysqlDataSource.setUser(getDatabase().getUsername());
+		mysqlDataSource.setPassword(getDatabase().getPassword());
+		connection = mysqlDataSource.getConnection();
 	}
 	
-	public void closeMySQL(Connection connection, PreparedStatement preparedStatement, ResultSet resultSet) {
+	@Override
+	public void close() {
 		try {
-			if (resultSet != null) {
-				resultSet.close();
+			if (getResultSet() != null) {
+				getResultSet().close();
 			}
 		} catch (SQLException ex) {
-			ConsoleOutput.debug("Failed to close resultSet.");
+			LogHelper.debug("Failed to close ResultSet!");
 		}
 		
 		try {
-			if (preparedStatement != null) {
-				preparedStatement.close();
+			if (getPreparedStatement() != null) {
+				getPreparedStatement().close();
 			}
 		} catch (SQLException ex) {
-			ConsoleOutput.debug("Failed to close preparedStatement.");
+			LogHelper.debug("Failed to close PreparedStatement!");
 		}
 		
 		try {
-			if (connection != null) {
-				connection.close();
+			if (getConnection() != null) {
+				getConnection().close();
 			}
 		} catch (SQLException ex) {
-			ConsoleOutput.debug("Failed to close connection.");
+			LogHelper.debug("Failed to close Connection!");
 		}
 	}
 	
 	public Database getDatabase() {
 		return database;
+	}
+	
+	public Connection getConnection() {
+		return connection;
+	}
+	
+	public PreparedStatement getPreparedStatement() {
+		return preparedStatement;
+	}
+	
+	public void setPreparedStatement(PreparedStatement preparedStatement) {
+		this.preparedStatement = preparedStatement;
+	}
+	
+	public ResultSet getResultSet() {
+		return resultSet;
+	}
+	
+	public void setResultSet(ResultSet resultSet) {
+		this.resultSet = resultSet;
 	}
 }

@@ -29,7 +29,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import nz.co.lolnet.mercury.Mercury;
-import nz.co.lolnet.mercury.util.ConsoleOutput;
+import nz.co.lolnet.mercury.entries.Config;
+import nz.co.lolnet.mercury.util.LogHelper;
 
 public class Configuration {
 	
@@ -51,15 +52,14 @@ public class Configuration {
 			if (getConfigFile() != null && !getConfigFile().exists()) {
 				getConfigFile().createNewFile();
 				Files.copy(new FileInputStream(Mercury.getInstance().getServletContext().getRealPath("/WEB-INF/config.json")), Paths.get(getConfigFile().getAbsolutePath()), StandardCopyOption.REPLACE_EXISTING);
-				ConsoleOutput.info("Successfully created configuration file.");
+				LogHelper.info("Successfully created configuration file.");
 			}
 			
-			JsonObject jsonObject = new JsonParser().parse(new String(Files.readAllBytes(Paths.get(getConfigFile().getAbsolutePath())), StandardCharsets.UTF_8)).getAsJsonObject();
+			JsonObject jsonObject = new JsonParser().parse(new String(Files.readAllBytes(getConfigFile().toPath()), StandardCharsets.UTF_8)).getAsJsonObject();
 			config = new Gson().fromJson(jsonObject, Config.class);
-			
-			ConsoleOutput.info("Successfully loaded configuration file.");
+			LogHelper.info("Successfully loaded configuration file.");
 		} catch (IOException | OutOfMemoryError | RuntimeException ex) {
-			ConsoleOutput.error("Exception loading configuration file!");
+			LogHelper.error("Encountered an error processing '" + getClass().getSimpleName() + "' - " + ex.getMessage());
 			ex.printStackTrace();
 		}
 	}

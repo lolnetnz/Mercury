@@ -14,28 +14,25 @@
  * limitations under the License.
  */
 
-package nz.co.lolnet.mercury.config;
+package nz.co.lolnet.mercury.entries;
 
-import java.util.HashMap;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-import nz.co.lolnet.mercury.entries.Account;
-import nz.co.lolnet.mercury.entries.Database;
-
-public class Config {
+public interface IEndpoint {
 	
-	private boolean debug;
-	private HashMap<String, Account> accounts;
-	private HashMap<String, Database> databases;
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response doGet();
 	
-	public boolean isDebug() {
-		return debug;
-	}
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response doPost();
 	
-	public HashMap<String, Account> getAccounts() {
-		return accounts;
-	}
-	
-	public HashMap<String, Database> getDatabases() {
-		return databases;
-	}
+	public String getPermission();
 }

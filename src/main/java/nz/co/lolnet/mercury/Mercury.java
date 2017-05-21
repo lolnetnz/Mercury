@@ -21,9 +21,9 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
-import nz.co.lolnet.mercury.config.Config;
 import nz.co.lolnet.mercury.config.Configuration;
-import nz.co.lolnet.mercury.util.ConsoleOutput;
+import nz.co.lolnet.mercury.entries.Config;
+import nz.co.lolnet.mercury.util.LogHelper;
 
 @WebListener
 public class Mercury implements ServletContextListener {
@@ -38,10 +38,11 @@ public class Mercury implements ServletContextListener {
 	
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
+		Thread.currentThread().setName("Mercury");
 		servletContext = event.getServletContext();
 		configuration = new Configuration();
 		configuration.loadConfig();
-		ConsoleOutput.info("Mercury initialized.");
+		LogHelper.info("Mercury initialized.");
 	}
 	
 	@Override
@@ -49,7 +50,7 @@ public class Mercury implements ServletContextListener {
 		configuration = null;
 		servletContext = null;
 		instance = null;
-		ConsoleOutput.info("Mercury destroyed!");
+		LogHelper.info("Mercury destroyed!");
 	}
 	
 	public static Mercury getInstance() {

@@ -16,9 +16,6 @@
 
 package nz.co.lolnet.mercury.api.lolcon;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.ws.rs.GET;
@@ -35,25 +32,26 @@ import com.google.gson.JsonObject;
 import nz.co.lolnet.mercury.Mercury;
 import nz.co.lolnet.mercury.authentication.Authentication;
 import nz.co.lolnet.mercury.entries.Data;
+import nz.co.lolnet.mercury.entries.Databases;
+import nz.co.lolnet.mercury.entries.IEndpoint;
 import nz.co.lolnet.mercury.mysql.MySQL;
-import nz.co.lolnet.mercury.util.ConsoleOutput;
 import nz.co.lolnet.mercury.util.JsonResponse;
+import nz.co.lolnet.mercury.util.LogHelper;
 
 @Path("/lolcon/getplayerbalance")
-public class GetPlayerBalance {
+public class GetPlayerBalance implements IEndpoint {
 	
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
+	@Override
 	public Response doGet() {
 		return Response.status(Status.BAD_REQUEST).entity(JsonResponse.error("Bad Request", "Bad request")).build();
 	}
 	
 	@GET
-	@Path("{request}/")
+	@Path("{request}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response doGet(@PathParam("request") String request) {
 		Authentication authentication = new Authentication();
-		Response response = authentication.checkAuthentication(request, "LolCon.getPlayerBalance");
+		Response response = authentication.checkAuthentication(request, getPermission());
 		
 		if (response.getStatus() != Status.ACCEPTED.getStatusCode()) {
 			return response;
@@ -67,27 +65,25 @@ public class GetPlayerBalance {
 		
 		JsonObject jsonObject = (JsonObject) response.getEntity();
 		if (!jsonObject.has("playerName")) {
-			data.setMessage(authentication.doEncrypt(JsonResponse.error("Bad Request", "Request is missing 'playerName'")));
+			data.setMessage(authentication.doEncrypt(JsonResponse.error("Bad Request", "Request is missing required arguments")));
 			return Response.status(Status.BAD_REQUEST).entity(new Gson().toJson(data)).build();
 		}
 		
 		String playerName = jsonObject.get("playerName").getAsString();
 		
-		MySQL mysql = new MySQL(Mercury.getInstance().getConfig().getDatabases().get("lolcon"));
-		
-		try (
-				Connection connection = mysql.getMySQLConnection();
-				PreparedStatement preparedStatement = createPreparedStatement(connection, playerName);
-				ResultSet resultSet = preparedStatement.executeQuery();
-			) {
+		try (MySQL mysql = new MySQL(Mercury.getInstance().getConfig().getDatabases().get(Databases.LOLCON))) {
+			mysql.createConnection();
+			mysql.setPreparedStatement(mysql.getConnection().prepareStatement("SELECT `lolcoins` FROM `player` WHERE `playerName`=? LIMIT 0 , 1"));
+			mysql.getPreparedStatement().setString(1, playerName);
+			mysql.setResultSet(mysql.getPreparedStatement().executeQuery());
 			
-			resultSet.next();
+			mysql.getResultSet().next();
 			
 			jsonObject = new JsonObject();
 			jsonObject.addProperty("playerName", playerName);
 			
-			if (resultSet.getRow() != 0) {
-				jsonObject.addProperty("playerBalance", resultSet.getInt("lolcoins"));
+			if (mysql.getResultSet().getRow() != 0) {
+				jsonObject.addProperty("playerBalance", mysql.getResultSet().getInt("lolcoins"));
 			} else {
 				jsonObject.addProperty("playerBalance", -1);
 			}
@@ -97,17 +93,19 @@ public class GetPlayerBalance {
 			
 			return Response.status(Status.OK).entity(new Gson().toJson(data)).build();
 		} catch (SQLException ex) {
-			ConsoleOutput.error("Encountered an error processing 'getPlayerBalance " + playerName + "' - SQLException");
+			LogHelper.error("Encountered an error processing in '" + getClass().getSimpleName() + "' - " + ex.getMessage());
 			ex.printStackTrace();
 		}
-		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(JsonResponse.error("InternalServerError", "Unable to process request.")).build();
+		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(JsonResponse.error("Internal Server Error", "Unable to process request.")).build();
 	}
 	
-	private PreparedStatement createPreparedStatement(Connection connection, String... args) throws SQLException {
-		PreparedStatement preparedStatement = connection.prepareStatement("SELECT `lolcoins` FROM `player` WHERE `playerName`=? LIMIT 0 , 1");
-		for (int index = 0; index > args.length; index++) {
-			preparedStatement.setString(index, args[index]);
-		}
-		return preparedStatement;
+	@Override
+	public Response doPost() {
+		return Response.status(Status.METHOD_NOT_ALLOWED).entity(JsonResponse.error("Method not allowed", "Method not allowed")).build();
+	}
+	
+	@Override
+	public String getPermission() {
+		return "LolCon.GetPlayerBalance";
 	}
 }

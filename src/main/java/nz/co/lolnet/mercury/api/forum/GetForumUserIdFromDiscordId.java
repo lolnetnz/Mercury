@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-package nz.co.lolnet.mercury.api.lolcon;
+package nz.co.lolnet.mercury.api.forum;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.ws.rs.GET;
@@ -35,15 +32,16 @@ import com.google.gson.JsonObject;
 import nz.co.lolnet.mercury.Mercury;
 import nz.co.lolnet.mercury.authentication.Authentication;
 import nz.co.lolnet.mercury.entries.Data;
+import nz.co.lolnet.mercury.entries.Databases;
+import nz.co.lolnet.mercury.entries.IEndpoint;
 import nz.co.lolnet.mercury.mysql.MySQL;
-import nz.co.lolnet.mercury.util.ConsoleOutput;
 import nz.co.lolnet.mercury.util.JsonResponse;
+import nz.co.lolnet.mercury.util.LogHelper;
 
 @Path("/lolcon/getforumuseridfromdiscordid")
-public class GetForumUserIdFromDiscordId {
+public class GetForumUserIdFromDiscordId implements IEndpoint {
 	
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
+	@Override
 	public Response doGet() {
 		return Response.status(Status.BAD_REQUEST).entity(JsonResponse.error("Bad Request", "Bad request")).build();
 	}
@@ -53,7 +51,7 @@ public class GetForumUserIdFromDiscordId {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response doGet(@PathParam("request") String request) {
 		Authentication authentication = new Authentication();
-		Response response = authentication.checkAuthentication(request, "LolCon.getForumUserIdFromDiscordId");
+		Response response = authentication.checkAuthentication(request, getPermission());
 		
 		if (response.getStatus() != Status.ACCEPTED.getStatusCode()) {
 			return response;
@@ -67,28 +65,25 @@ public class GetForumUserIdFromDiscordId {
 		
 		JsonObject jsonObject = (JsonObject) response.getEntity();
 		if (!jsonObject.has("discordId")) {
-			data.setMessage(authentication.doEncrypt(JsonResponse.error("Bad Request", "Request is missing 'discordId'")));
+			data.setMessage(authentication.doEncrypt(JsonResponse.error("Bad Request", "Request is missing required arguments")));
 			return Response.status(Status.BAD_REQUEST).entity(new Gson().toJson(data)).build();
 		}
 		
 		String discordId = jsonObject.get("discordId").getAsString();
 		
-		MySQL mysql = new MySQL(Mercury.getInstance().getConfig().getDatabases().get("forum"));
-		Connection connection = null;
-		PreparedStatement preparedStatement = null;
-		ResultSet resultSet = null;
-		try {
-			connection = mysql.getMySQLConnection();
-			preparedStatement = connection.prepareStatement("SELECT `user_id` FROM `xenforo.xf_user_field_value` WHERE `field_id`='discordid' AND `field_value`=? LIMIT 0 , 1");
-			preparedStatement.setString(1, discordId);
-			resultSet = preparedStatement.executeQuery();
-			resultSet.next();
+		try (MySQL mysql = new MySQL(Mercury.getInstance().getConfig().getDatabases().get(Databases.FORUM))) {
+			mysql.createConnection();
+			mysql.setPreparedStatement(
+					mysql.getConnection().prepareStatement("SELECT `user_id` FROM `xenforo.xf_user_field_value` WHERE `field_id`='discordid' AND `field_value`=? LIMIT 0 , 1"));
+			mysql.getPreparedStatement().setString(1, discordId);
+			mysql.setResultSet(mysql.getPreparedStatement().executeQuery());
+			mysql.getResultSet().next();
 			
 			jsonObject = new JsonObject();
 			jsonObject.addProperty("discordId", discordId);
 			
-			if (resultSet.getRow() != 0) {
-				jsonObject.addProperty("forumId", resultSet.getString("user_id"));
+			if (mysql.getResultSet().getRow() != 0) {
+				jsonObject.addProperty("forumId", mysql.getResultSet().getString("user_id"));
 			} else {
 				jsonObject.addProperty("forumId", 0);
 			}
@@ -98,12 +93,19 @@ public class GetForumUserIdFromDiscordId {
 			
 			return Response.status(Status.OK).entity(new Gson().toJson(data)).build();
 		} catch (SQLException ex) {
-			ConsoleOutput.error("Encountered an error processing 'getForumUserIdFromDiscordId " + discordId + "' - SQLException");
+			LogHelper.error("Encountered an error processing in '" + getClass().getSimpleName() + "' - " + ex.getMessage());
 			ex.printStackTrace();
-		} finally {
-			mysql.closeMySQL(connection, preparedStatement, resultSet);
-			mysql = null;
 		}
-		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(JsonResponse.error("InternalServerError", "Unable to process request.")).build();
+		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(JsonResponse.error("Internal Server Error", "Unable to process request.")).build();
+	}
+	
+	@Override
+	public Response doPost() {
+		return Response.status(Status.METHOD_NOT_ALLOWED).entity(JsonResponse.error("Method not allowed", "Method not allowed")).build();
+	}
+	
+	@Override
+	public String getPermission() {
+		return "Forum.GetForumUserIdFromDiscordId";
 	}
 }

@@ -34,7 +34,7 @@ import com.google.gson.JsonParser;
 import nz.co.lolnet.mercury.Mercury;
 import nz.co.lolnet.mercury.entries.Account;
 import nz.co.lolnet.mercury.entries.Data;
-import nz.co.lolnet.mercury.util.ConsoleOutput;
+import nz.co.lolnet.mercury.util.LogHelper;
 import nz.co.lolnet.mercury.util.JsonResponse;
 
 public class Authentication {
@@ -61,7 +61,7 @@ public class Authentication {
 			jsonObject = new JsonParser().parse(doDecrypt(data.getMessage())).getAsJsonObject();
 			return Response.status(Status.ACCEPTED).entity(jsonObject).build();
 		} catch (RuntimeException ex) {
-			ConsoleOutput.error("Exception in 'checkAuthentication'!");
+			LogHelper.error("Encountered an error processing 'checkAuthentication' in '" + getClass().getSimpleName() + "' - " + ex.getMessage());
 			ex.printStackTrace();
 		}
 		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(JsonResponse.error("Internal Server Error", "An error occurred during authentication!")).build();
@@ -117,7 +117,7 @@ public class Authentication {
 			
 			return Base64.getEncoder().encodeToString(byteArray);
 		} catch (GeneralSecurityException | RuntimeException ex) {
-			ConsoleOutput.error("Exception during doEncrypt!");
+			LogHelper.error("Encountered an error processing 'doEncrypt' in '" + getClass().getSimpleName() + "' - " + ex.getMessage());
 			ex.printStackTrace();
 		}
 		return null;
@@ -142,7 +142,7 @@ public class Authentication {
 			
 			return new String(decrypted, StandardCharsets.UTF_8).trim();
 		} catch (GeneralSecurityException | RuntimeException ex) {
-			ConsoleOutput.error("Exception during doDecrypt!");
+			LogHelper.error("Encountered an error processing 'doDecrypt' in '" + getClass().getSimpleName() + "' - " + ex.getMessage());
 			ex.printStackTrace();
 		}
 		return null;

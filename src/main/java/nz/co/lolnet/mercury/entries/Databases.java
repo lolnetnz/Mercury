@@ -14,18 +14,10 @@
  * limitations under the License.
  */
 
-package nz.co.lolnet.mercury.api;
+package nz.co.lolnet.mercury.entries;
 
-@Deprecated
-public interface APIRequest {
-    
-    public Object run();
-    
-    public String getRequestName();
-    
-    public String getPermission();
-    
-    public String getOutputClassName();
-    
-    public void acceptInputs(Object input);
+public class Databases {
+	
+	public static final String FORUM = "forum";
+	public static final String LOLCON = "lolcon";
 }

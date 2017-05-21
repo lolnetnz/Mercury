@@ -21,23 +21,23 @@ import java.util.Calendar;
 
 import nz.co.lolnet.mercury.Mercury;
 
-public class ConsoleOutput {
+public class LogHelper {
 	
 	public static void info(String string) {
-		System.out.println("[" + new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime()) + "] [Info] [Mercury]: " + string);
+		System.out.println("[" + new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime()) + "] [Info] [" + Thread.currentThread().getName() + "]: " + string);
 	}
 	
 	public static void warn(String string) {
-		System.out.println("[" + new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime()) + "] [Warn] [Mercury]: " + string);
+		System.out.println("[" + new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime()) + "] [Warn] [" + Thread.currentThread().getName() + "]: " + string);
 	}
 	
 	public static void error(String string) {
-		System.out.println("[" + new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime()) + "] [Error] [Mercury]: " + string);
+		System.out.println("[" + new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime()) + "] [Error] [" + Thread.currentThread().getName() + "]: " + string);
 	}
 	
 	public static void debug(String string) {
 		if (Mercury.getInstance().getConfig() != null && Mercury.getInstance().getConfig().isDebug()) {
-			System.out.println("[" + new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime()) + "] [Debug] [Mercury]: " + string);
+			System.out.println("[" + new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime()) + "] [Debug] [" + Thread.currentThread().getName() + "]: " + string);
 		}
 	}
 }
