@@ -8,6 +8,12 @@ version = "0.0.1-ALPHA"
 group = "nz.co.lolnet.mercury"
 archivesBaseName = "Mercury"
 
+configurations {
+  provided {
+    compile.extendsFrom(provided)
+  }
+}
+
 repositories {
   mavenCentral()
 }
@@ -15,12 +21,18 @@ repositories {
 dependencies {
   compile "com.google.code.gson:gson:2.8.0"
   compile "javax.servlet:javax.servlet-api:3.1.0"
-  compile "mysql:mysql-connector-java:6.0.5"
+  compile "mysql:mysql-connector-java:6.0.6"
+  provided "org.eclipse.jetty:jetty-webapp:9.4.5.v20170502"
   compile "org.glassfish.jersey.core:jersey-server:2.25.1"
-  compile "org.glassfish.jersey.containers:jersey-container-servlet-core:2.25"
+  compile "org.glassfish.jersey.containers:jersey-container-servlet-core:2.25.1"
 }
 
 war {
+  from {
+    configurations.compile.collect {
+	  it.isDirectory() ? it : zipTree(it)
+	}
+  }
   from {
     ["LICENSE"]
   }
