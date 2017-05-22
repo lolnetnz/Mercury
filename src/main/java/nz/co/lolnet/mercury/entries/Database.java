@@ -43,4 +43,13 @@ public class Database {
 	public String getPassword() {
 		return password;
 	}
+	
+	public enum Databases {
+		FORUM, LOLCON;
+		
+		@Override
+		public String toString() {
+			return name().toLowerCase();
+		}
+	}
 }
