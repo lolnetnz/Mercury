@@ -17,6 +17,8 @@
 package nz.co.lolnet.mercury.api.forum;
 
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -33,7 +35,7 @@ import com.google.gson.JsonObject;
 import nz.co.lolnet.mercury.Mercury;
 import nz.co.lolnet.mercury.authentication.Authentication;
 import nz.co.lolnet.mercury.entries.Data;
-import nz.co.lolnet.mercury.entries.Databases;
+import nz.co.lolnet.mercury.entries.Database.Databases;
 import nz.co.lolnet.mercury.entries.IEndpoint;
 import nz.co.lolnet.mercury.mysql.MySQL;
 import nz.co.lolnet.mercury.util.JsonResponse;
@@ -52,7 +54,7 @@ public class GetForumGroups implements IEndpoint {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response doGet(@PathParam("request") String request) {
 		Authentication authentication = new Authentication();
-		Response response = authentication.checkAuthentication(request, getPermission());
+		Response response = authentication.checkAuthentication(request, getPermissions());
 		
 		if (response.getStatus() != Status.ACCEPTED.getStatusCode()) {
 			return response;
@@ -96,7 +98,7 @@ public class GetForumGroups implements IEndpoint {
 	}
 	
 	@Override
-	public String getPermission() {
-		return "Forum.GetFourmGroup";
+	public List<String> getPermissions() {
+		return Arrays.asList("Forum.GetFourmGroup");
 	}
 }

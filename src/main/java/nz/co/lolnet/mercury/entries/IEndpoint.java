@@ -16,6 +16,8 @@
 
 package nz.co.lolnet.mercury.entries;
 
+import java.util.List;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Produces;
@@ -32,5 +34,5 @@ public interface IEndpoint {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response doPost();
 	
-	public String getPermission();
+	public List<String> getPermissions();
 }

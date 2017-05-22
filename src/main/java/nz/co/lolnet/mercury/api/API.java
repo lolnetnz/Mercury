@@ -16,6 +16,8 @@
 
 package nz.co.lolnet.mercury.api;
 
+import java.util.List;
+
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -47,7 +49,7 @@ public class API implements IEndpoint {
 	}
 	
 	@Override
-	public String getPermission() {
+	public List<String> getPermissions() {
 		return null;
 	}
 }

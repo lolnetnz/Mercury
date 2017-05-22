@@ -17,6 +17,8 @@
 package nz.co.lolnet.mercury.api.lolcon;
 
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -32,7 +34,7 @@ import com.google.gson.JsonObject;
 import nz.co.lolnet.mercury.Mercury;
 import nz.co.lolnet.mercury.authentication.Authentication;
 import nz.co.lolnet.mercury.entries.Data;
-import nz.co.lolnet.mercury.entries.Databases;
+import nz.co.lolnet.mercury.entries.Database.Databases;
 import nz.co.lolnet.mercury.entries.IEndpoint;
 import nz.co.lolnet.mercury.mysql.MySQL;
 import nz.co.lolnet.mercury.util.JsonResponse;
@@ -51,7 +53,7 @@ public class GetPlayerBalance implements IEndpoint {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response doGet(@PathParam("request") String request) {
 		Authentication authentication = new Authentication();
-		Response response = authentication.checkAuthentication(request, getPermission());
+		Response response = authentication.checkAuthentication(request, getPermissions());
 		
 		if (response.getStatus() != Status.ACCEPTED.getStatusCode()) {
 			return response;
@@ -105,7 +107,7 @@ public class GetPlayerBalance implements IEndpoint {
 	}
 	
 	@Override
-	public String getPermission() {
-		return "LolCon.GetPlayerBalance";
+	public List<String> getPermissions() {
+		return Arrays.asList("LolCon.GetPlayerBalance");
 	}
 }

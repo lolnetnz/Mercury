@@ -17,6 +17,8 @@
 package nz.co.lolnet.mercury.api.lolcon;
 
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -31,7 +33,7 @@ import com.google.gson.JsonObject;
 import nz.co.lolnet.mercury.Mercury;
 import nz.co.lolnet.mercury.authentication.Authentication;
 import nz.co.lolnet.mercury.entries.Data;
-import nz.co.lolnet.mercury.entries.Databases;
+import nz.co.lolnet.mercury.entries.Database.Databases;
 import nz.co.lolnet.mercury.entries.IEndpoint;
 import nz.co.lolnet.mercury.mysql.MySQL;
 import nz.co.lolnet.mercury.util.JsonResponse;
@@ -54,7 +56,7 @@ public class CreateSign implements IEndpoint {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response doPost(String request) {
 		Authentication authentication = new Authentication();
-		Response response = authentication.checkAuthentication(request, getPermission());
+		Response response = authentication.checkAuthentication(request, getPermissions());
 		
 		if (response.getStatus() != Status.ACCEPTED.getStatusCode()) {
 			return response;
@@ -84,12 +86,9 @@ public class CreateSign implements IEndpoint {
 			mysql.getPreparedStatement().setString(3, playerName);
 			mysql.getPreparedStatement().executeUpdate();
 			
-			jsonObject = new JsonObject();
-			jsonObject.addProperty("status", true);
-			data.setMessage(authentication.doEncrypt(new Gson().toJson(jsonObject)));
 			jsonObject = null;
 			
-			return Response.status(Status.OK).entity(new Gson().toJson(data)).build();
+			return Response.status(Status.NO_CONTENT).build();
 		} catch (SQLException ex) {
 			LogHelper.error("Encountered an error processing in '" + getClass().getSimpleName() + "' - " + ex.getMessage());
 			ex.printStackTrace();
@@ -98,7 +97,7 @@ public class CreateSign implements IEndpoint {
 	}
 	
 	@Override
-	public String getPermission() {
-		return "LolCon.CreateSign";
+	public List<String> getPermissions() {
+		return Arrays.asList("LolCon.CreateSign");
 	}
 }
