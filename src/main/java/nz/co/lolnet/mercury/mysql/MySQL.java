@@ -59,7 +59,6 @@ public class MySQL implements AutoCloseable {
 	
 	@Override
 	public void close() {
-		LogHelper.debug("Close Called!");
 		try {
 			if (getResultSet() != null) {
 				getResultSet().close();
@@ -83,8 +82,6 @@ public class MySQL implements AutoCloseable {
 		} catch (SQLException ex) {
 			LogHelper.debug("Failed to close Connection!");
 		}
-		
-		LogHelper.debug("Close Ended!");
 	}
 	
 	public Database getDatabase() {

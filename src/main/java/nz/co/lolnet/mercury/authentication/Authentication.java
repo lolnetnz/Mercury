@@ -118,7 +118,7 @@ public class Authentication {
 			System.arraycopy(ivBytes, 0, byteArray, 0, ivBytes.length);
 			System.arraycopy(encrypted, 0, byteArray, ivBytes.length, encrypted.length);
 			
-			return Base64.getUrlEncoder().encodeToString(byteArray);
+			return Base64.getEncoder().encodeToString(byteArray);
 		} catch (GeneralSecurityException | RuntimeException ex) {
 			LogHelper.error("Encountered an error processing 'doEncrypt' in '" + getClass().getSimpleName() + "' - " + ex.getMessage());
 			ex.printStackTrace();
@@ -130,7 +130,7 @@ public class Authentication {
 		try {
 			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
 			
-			byte[] input = Base64.getUrlDecoder().decode(encrypted);
+			byte[] input = Base64.getDecoder().decode(encrypted);
 			byte[] secret = getSecret(password.toCharArray());
 			byte[] ivBytes = new byte[16];
 			
