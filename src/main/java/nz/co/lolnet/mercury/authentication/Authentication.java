@@ -61,8 +61,12 @@ public class Authentication {
 				return Response.status(Status.BAD_REQUEST).entity(JsonResponse.error("Bad Request", "Supplied UniqueId does not exist!")).build();
 			}
 			
-			jsonObject = new JsonParser().parse(doDecrypt(data.getMessage())).getAsJsonObject();
-			return Response.status(Status.ACCEPTED).entity(jsonObject).build();
+			if (StringUtil.isNotBlank(data.getMessage())) {
+				jsonObject = new JsonParser().parse(doDecrypt(data.getMessage())).getAsJsonObject();
+				return Response.status(Status.ACCEPTED).entity(jsonObject).build();
+			}
+			
+			return Response.status(Status.ACCEPTED).build();
 		} catch (RuntimeException ex) {
 			LogHelper.error("Encountered an error processing 'checkAuthentication' in '" + getClass().getSimpleName() + "' - " + ex.getMessage());
 			ex.printStackTrace();

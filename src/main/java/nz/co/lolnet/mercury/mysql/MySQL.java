@@ -54,6 +54,7 @@ public class MySQL implements AutoCloseable {
 		mysqlDataSource.setDatabaseName(getDatabase().getDatabase());
 		mysqlDataSource.setUser(getDatabase().getUsername());
 		mysqlDataSource.setPassword(getDatabase().getPassword());
+		mysqlDataSource.setLoginTimeout(2500); //TODO Verify this won't cause any issues.
 		connection = mysqlDataSource.getConnection();
 	}
 	
