@@ -73,7 +73,7 @@ public class GetPlayerBalance implements IEndpoint {
 		
 		String playerName = jsonObject.get("playerName").getAsString();
 		
-		try (MySQL mysql = new MySQL(Mercury.getInstance().getConfig().getDatabases().get(Databases.LOLCON))) {
+		try (MySQL mysql = new MySQL(Mercury.getInstance().getConfig().getDatabases().get(Databases.LOLCON.toString()))) {
 			mysql.createConnection();
 			mysql.setPreparedStatement(mysql.getConnection().prepareStatement("SELECT `lolcoins` FROM `player` WHERE `playerName`=? LIMIT 0 , 1"));
 			mysql.getPreparedStatement().setString(1, playerName);

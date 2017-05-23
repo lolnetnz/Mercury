@@ -77,7 +77,7 @@ public class ChangePlayerName implements IEndpoint {
 		String playerName = jsonObject.get("playerName").getAsString();
 		String playerUUID = jsonObject.get("playerUUID").getAsString();
 		
-		try (MySQL mysql = new MySQL(Mercury.getInstance().getConfig().getDatabases().get(Databases.LOLCON))){
+		try (MySQL mysql = new MySQL(Mercury.getInstance().getConfig().getDatabases().get(Databases.LOLCON.toString()))){
 			mysql.createConnection();
 			mysql.setPreparedStatement(mysql.getConnection().prepareStatement("UPDATE `player` SET `playerName`= ? WHERE `playeruuid`=?;"));
 			mysql.getPreparedStatement().setString(1, playerName);

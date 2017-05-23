@@ -77,7 +77,7 @@ public class AddTempCommand implements IEndpoint {
 		String playerName = jsonObject.get("playerName").getAsString();
 		String packageName = jsonObject.get("packageName").getAsString();
 		
-		try (MySQL mysql = new MySQL(Mercury.getInstance().getConfig().getDatabases().get(Databases.LOLCON))) {
+		try (MySQL mysql = new MySQL(Mercury.getInstance().getConfig().getDatabases().get(Databases.LOLCON.toString()))) {
 			mysql.createConnection();
 			mysql.setPreparedStatement(mysql.getConnection().prepareStatement("INSERT INTO `TempCommandDatabase` (`PlayerName`, `packageName`) VALUES (?, ?);"));
 			mysql.getPreparedStatement().setString(1, playerName);

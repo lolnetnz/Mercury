@@ -78,7 +78,7 @@ public class CreateSign implements IEndpoint {
 		String location = jsonObject.get("location").getAsString();
 		String details = jsonObject.get("details").getAsString();
 		
-		try (MySQL mysql = new MySQL(Mercury.getInstance().getConfig().getDatabases().get(Databases.LOLCON))) {
+		try (MySQL mysql = new MySQL(Mercury.getInstance().getConfig().getDatabases().get(Databases.LOLCON.toString()))) {
 			mysql.createConnection();
 			mysql.setPreparedStatement(mysql.getConnection().prepareStatement("INSERT INTO `CommandSignDatabase`(`Location`, `Line3`, `Creator`) VALUES (?,?,?);"));
 			mysql.getPreparedStatement().setString(1, location);

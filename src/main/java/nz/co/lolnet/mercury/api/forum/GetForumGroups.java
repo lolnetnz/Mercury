@@ -67,7 +67,7 @@ public class GetForumGroups implements IEndpoint {
 		}
 		
 		JsonObject jsonObject = (JsonObject) response.getEntity();
-		try (MySQL mysql = new MySQL(Mercury.getInstance().getConfig().getDatabases().get(Databases.FORUM))) {
+		try (MySQL mysql = new MySQL(Mercury.getInstance().getConfig().getDatabases().get(Databases.FORUM.toString()))) {
 			mysql.createConnection();
 			mysql.setPreparedStatement(mysql.getConnection().prepareStatement("SELECT `user_group_id`, `title` FROM `xenforo.xf_user_group`;"));
 			mysql.setResultSet(mysql.getPreparedStatement().executeQuery());

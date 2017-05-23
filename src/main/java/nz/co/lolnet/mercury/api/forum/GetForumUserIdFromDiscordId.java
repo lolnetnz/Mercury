@@ -73,7 +73,7 @@ public class GetForumUserIdFromDiscordId implements IEndpoint {
 		
 		String discordId = jsonObject.get("discordId").getAsString();
 		
-		try (MySQL mysql = new MySQL(Mercury.getInstance().getConfig().getDatabases().get(Databases.FORUM))) {
+		try (MySQL mysql = new MySQL(Mercury.getInstance().getConfig().getDatabases().get(Databases.FORUM.toString()))) {
 			mysql.createConnection();
 			mysql.setPreparedStatement(
 					mysql.getConnection().prepareStatement("SELECT `user_id` FROM `xenforo.xf_user_field_value` WHERE `field_id`='discordid' AND `field_value`=? LIMIT 0 , 1"));
