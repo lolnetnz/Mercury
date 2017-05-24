@@ -85,9 +85,9 @@ public class GetForumUserIdFromDiscordId implements IEndpoint {
 			jsonObject.addProperty("discordId", discordId);
 			
 			if (mysql.getResultSet().getRow() != 0) {
-				jsonObject.addProperty("forumId", mysql.getResultSet().getString("user_id"));
+				jsonObject.addProperty("userForumId", mysql.getResultSet().getInt("user_id"));
 			} else {
-				jsonObject.addProperty("forumId", 0);
+				jsonObject.addProperty("userForumId", 0);
 			}
 			
 			data.setMessage(authentication.doEncrypt(new Gson().toJson(jsonObject)));
