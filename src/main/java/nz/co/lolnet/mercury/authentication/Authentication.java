@@ -66,7 +66,7 @@ public class Authentication {
 			}
 			
 			jsonObject = new JsonParser().parse(doDecrypt(data.getMessage())).getAsJsonObject();
-			if (!jsonObject.has("creationTime") || !isRequestValid(jsonObject.remove("creationTime").getAsLong())) {
+			if (jsonObject == null || !jsonObject.has("creationTime") || !isRequestValid(jsonObject.remove("creationTime").getAsLong())) {
 				return Response.status(Status.FORBIDDEN).entity(JsonResponse.error("Forbidden", "Request could not be validated!")).build();
 			}
 			
