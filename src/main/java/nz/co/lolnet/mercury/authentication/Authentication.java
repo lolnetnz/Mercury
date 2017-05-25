@@ -61,17 +61,40 @@ public class Authentication {
 				return Response.status(Status.BAD_REQUEST).entity(JsonResponse.error("Bad Request", "Supplied UniqueId does not exist!")).build();
 			}
 			
-			if (StringUtil.isNotBlank(data.getMessage())) {
-				jsonObject = new JsonParser().parse(doDecrypt(data.getMessage())).getAsJsonObject();
-				return Response.status(Status.ACCEPTED).entity(jsonObject).build();
+			if (StringUtil.isBlank(data.getMessage())) {
+				return Response.status(Status.BAD_REQUEST).entity(JsonResponse.error("Bad Request", "Request contained no data!")).build();
 			}
 			
+			jsonObject = new JsonParser().parse(doDecrypt(data.getMessage())).getAsJsonObject();
+			if (!jsonObject.has("creationTime") || !isRequestValid(jsonObject.remove("creationTime").getAsLong())) {
+				return Response.status(Status.FORBIDDEN).entity(JsonResponse.error("Forbidden", "Request could not be validated!")).build();
+			}
+			
+			if (jsonObject.size() != 0) {
+				return Response.status(Status.ACCEPTED).entity(jsonObject).build();
+			}
 			return Response.status(Status.ACCEPTED).build();
 		} catch (RuntimeException ex) {
 			LogHelper.error("Encountered an error processing 'checkAuthentication' in '" + getClass().getSimpleName() + "' - " + ex.getMessage());
 			ex.printStackTrace();
 		}
 		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(JsonResponse.error("Internal Server Error", "An error occurred during authentication!")).build();
+	}
+	
+	private boolean isRequestValid(long creationTime) {
+		if (Mercury.getInstance() == null || Mercury.getInstance().getConfig() == null) {
+			return false;
+		}
+		
+		long requestValidityTime = Mercury.getInstance().getConfig().getRequestValidityTime();
+		if (creationTime == 0 || requestValidityTime == 0) {
+			return false;
+		}
+		
+		if (creationTime >= (System.currentTimeMillis() - requestValidityTime) && creationTime <= (System.currentTimeMillis() + requestValidityTime)) {
+			return true;
+		}
+		return false;
 	}
 	
 	public boolean hasPermission(List<String> permissions) {

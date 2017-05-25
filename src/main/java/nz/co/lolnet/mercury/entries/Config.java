@@ -21,11 +21,16 @@ import java.util.HashMap;
 public class Config {
 	
 	private boolean debug;
+	private long requestValidityTime;
 	private HashMap<String, Account> accounts;
 	private HashMap<String, Database> databases;
 	
 	public boolean isDebug() {
 		return debug;
+	}
+	
+	public long getRequestValidityTime() {
+		return requestValidityTime;
 	}
 	
 	public HashMap<String, Account> getAccounts() {
