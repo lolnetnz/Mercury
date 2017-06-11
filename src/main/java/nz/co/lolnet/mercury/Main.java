@@ -20,12 +20,13 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 import nz.co.lolnet.mercury.util.LogHelper;
+import nz.co.lolnet.mercury.util.Reference;
 
 public class Main {
 	
 	public static void main(String[] args) {
-		Thread.currentThread().setName("Mercury-Main");
-		LogHelper.info("Initializing...");
+		Thread.currentThread().setName(Reference.APP_NAME + "-Main");
+		LogHelper.info(Reference.APP_NAME + " initializing...");
 		
 		try {
 			Server server = new Server(80);

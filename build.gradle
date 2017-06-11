@@ -13,10 +13,6 @@ archivesBaseName = "Mercury"
 version = "0.0.1-ALPHA"
 
 configurations {
-    provided {
-        compile.extendsFrom(provided)
-    }
-
     build {
         if (project.tasks.findByName("signJar")) {
             return finalizedBy(signJar)
@@ -37,24 +33,16 @@ repositories {
 }
 
 dependencies {
-    compile("com.google.code.gson:gson:2.8.0")
+    compile("com.google.code.gson:gson:2.8.1")
     compile("javax.servlet:javax.servlet-api:3.1.0")
     compile("mysql:mysql-connector-java:6.0.6")
-    provided("org.eclipse.jetty:jetty-webapp:9.4.5.v20170502")
+    compile("org.apache.commons:commons-lang3:3.5")
     compile("org.glassfish.jersey.core:jersey-server:2.25.1")
     compile("org.glassfish.jersey.containers:jersey-container-servlet-core:2.25.1")
+    providedCompile("org.eclipse.jetty:jetty-webapp:9.4.5.v20170502")
 }
 
 war {
-    from {
-        (configurations.compile - configurations.provided).collect {
-            if (it.isDirectory()) {
-                return it
-            }
-            return zipTree(it)
-        }
-    }
-	
 	archiveName("root.war")
 }
 

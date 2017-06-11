@@ -38,15 +38,15 @@ import nz.co.lolnet.mercury.entries.Data;
 import nz.co.lolnet.mercury.entries.Database.Databases;
 import nz.co.lolnet.mercury.entries.IEndpoint;
 import nz.co.lolnet.mercury.mysql.MySQL;
-import nz.co.lolnet.mercury.util.JsonResponse;
 import nz.co.lolnet.mercury.util.LogHelper;
+import nz.co.lolnet.mercury.util.MercuryUtil;
 
 @Path("/forum/getforumuserforumgroups")
 public class GetForumUserForumGroups implements IEndpoint {
 	
 	@Override
 	public Response doGet() {
-		return Response.status(Status.BAD_REQUEST).entity(JsonResponse.error("Bad Request", "Bad request")).build();
+		return Response.status(Status.BAD_REQUEST).entity(MercuryUtil.createErrorResponse("Bad Request", "Bad request")).build();
 	}
 	
 	@GET
@@ -62,13 +62,13 @@ public class GetForumUserForumGroups implements IEndpoint {
 		
 		Data data = authentication.getData();
 		if (!response.hasEntity() || !(response.getEntity() instanceof JsonObject)) {
-			data.setMessage(authentication.doEncrypt(JsonResponse.error("Internal Server Error", "Invalid response")));
+			data.setMessage(authentication.doEncrypt(MercuryUtil.createErrorResponse("Internal Server Error", "Invalid response")));
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(new Gson().toJson(data)).build();
 		}
 		
 		JsonObject jsonObject = (JsonObject) response.getEntity();
 		if (!jsonObject.has("userForumId")) {
-			data.setMessage(authentication.doEncrypt(JsonResponse.error("Bad Request", "Request is missing required arguments")));
+			data.setMessage(authentication.doEncrypt(MercuryUtil.createErrorResponse("Bad Request", "Request is missing required arguments")));
 			return Response.status(Status.BAD_REQUEST).entity(new Gson().toJson(data)).build();
 		}
 		
@@ -101,12 +101,12 @@ public class GetForumUserForumGroups implements IEndpoint {
 			LogHelper.error("Encountered an error processing in '" + getClass().getSimpleName() + "' - " + ex.getMessage());
 			ex.printStackTrace();
 		}
-		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(JsonResponse.error("Internal Server Error", "Unable to process request.")).build();
+		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(MercuryUtil.createErrorResponse("Internal Server Error", "Unable to process request")).build();
 	}
 	
 	@Override
 	public Response doPost() {
-		return Response.status(Status.METHOD_NOT_ALLOWED).entity(JsonResponse.error("Method not allowed", "Method not allowed")).build();
+		return Response.status(Status.METHOD_NOT_ALLOWED).entity(MercuryUtil.createErrorResponse("Method not allowed", "Method not allowed")).build();
 	}
 	
 	@Override

@@ -1,19 +1,19 @@
 {
-    "debug": true,
-    "requestValidityTime": 120000,
+    "debug": false,
+    "requestValidityTime": 30000,
     "accounts": {
-        "uniqueId": {
-            "name": "",
-            "token": "",
+        "00000000-0000-0000-0000-000000000000": {
+            "name": "Mercury",
+            "token": "Token",
             "permissions": []
         }
     },
     "databases": {
-        "uniqueId": {
-            "host": "",
+        "mercury": {
+            "host": "127.0.0.1",
             "port": 3306,
-            "database": "",
-            "username": "",
+            "database": "database",
+            "username": "root",
             "password": ""
         }
     }

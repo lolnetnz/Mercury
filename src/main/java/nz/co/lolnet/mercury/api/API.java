@@ -22,10 +22,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 import nz.co.lolnet.mercury.entries.IEndpoint;
+import nz.co.lolnet.mercury.util.Reference;
 
 @Path("/")
 public class API implements IEndpoint {
@@ -42,10 +43,13 @@ public class API implements IEndpoint {
 	
 	private String getMercuryInformation() {
 		JsonObject jsonObject = new JsonObject();
-		jsonObject.addProperty("Application-Title", "Mercury");
-		jsonObject.addProperty("Application-Version", "0.0.1-ALPHA");
-		jsonObject.addProperty("Application-Author", "lolnet.co.nz");
-		return new Gson().toJson(jsonObject);
+		jsonObject.addProperty("App-Id", Reference.APP_ID);
+		jsonObject.addProperty("App-Name", Reference.APP_NAME);
+		jsonObject.addProperty("App-Version", Reference.APP_VERSION);
+		jsonObject.addProperty("Authors", String.join(", ", Reference.AUTHORS));
+		jsonObject.addProperty("Source", Reference.SOURCE);
+		jsonObject.addProperty("Website", Reference.WEBSITE);
+		return new GsonBuilder().setPrettyPrinting().create().toJson(jsonObject);
 	}
 	
 	@Override

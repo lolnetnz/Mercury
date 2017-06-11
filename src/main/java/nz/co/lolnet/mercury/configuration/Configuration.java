@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package nz.co.lolnet.mercury.config;
+package nz.co.lolnet.mercury.configuration;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -43,7 +42,7 @@ public class Configuration {
 		configFile = new File(getMercuryDirectory().getAbsolutePath() + "/config.json");
 	}
 	
-	public void loadConfig() {
+	public void loadConfiguration() {
 		try {
 			if (getMercuryDirectory() != null && !getMercuryDirectory().exists()) {
 				getMercuryDirectory().mkdir();
@@ -51,7 +50,7 @@ public class Configuration {
 			
 			if (getConfigFile() != null && !getConfigFile().exists()) {
 				getConfigFile().createNewFile();
-				Files.copy(new FileInputStream(Mercury.getInstance().getServletContext().getRealPath("/WEB-INF/config.json")), Paths.get(getConfigFile().getAbsolutePath()), StandardCopyOption.REPLACE_EXISTING);
+				Files.copy(Paths.get(Mercury.getInstance().getServletContext().getRealPath("/WEB-INF/config.json")), getConfigFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
 				LogHelper.info("Successfully created configuration file.");
 			}
 			
@@ -59,7 +58,7 @@ public class Configuration {
 			config = new Gson().fromJson(jsonObject, Config.class);
 			LogHelper.info("Successfully loaded configuration file.");
 		} catch (IOException | OutOfMemoryError | RuntimeException ex) {
-			LogHelper.error("Encountered an error processing '" + getClass().getSimpleName() + "' - " + ex.getMessage());
+			LogHelper.error("Encountered an error processing 'loadConfiguration' in '" + getClass().getSimpleName() + "' - " + ex.getMessage());
 			ex.printStackTrace();
 		}
 	}

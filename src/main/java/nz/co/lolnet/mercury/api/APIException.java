@@ -24,19 +24,19 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import nz.co.lolnet.mercury.util.LogHelper;
-import nz.co.lolnet.mercury.util.JsonResponse;
+import nz.co.lolnet.mercury.util.MercuryUtil;
 
 @Provider
 public class APIException implements ExceptionMapper<Throwable> {
 	
 	@Override
 	public Response toResponse(Throwable throwable) {
-		LogHelper.error("Encountered an error processing in '" + getClass().getSimpleName() + "' - " + throwable.getMessage());
+		LogHelper.error("Encountered an error - " + throwable.getMessage());
 		
 		if (!(throwable instanceof ClientErrorException)) {
 			return Response
 					.status(Status.INTERNAL_SERVER_ERROR)
-					.entity(JsonResponse.error("Internal Server Error", throwable.getMessage()))
+					.entity(MercuryUtil.createErrorResponse("Internal Server Error", throwable.getMessage()))
 					.type(MediaType.APPLICATION_JSON)
 					.build();
 		}
@@ -44,7 +44,7 @@ public class APIException implements ExceptionMapper<Throwable> {
 		ClientErrorException clientErrorException = (ClientErrorException) throwable;
 		return Response
 				.status(clientErrorException.getResponse().getStatus())
-				.entity(JsonResponse.error(clientErrorException.getResponse().getStatusInfo().getReasonPhrase(), clientErrorException.getMessage()))
+				.entity(MercuryUtil.createErrorResponse(clientErrorException.getResponse().getStatusInfo().getReasonPhrase(), clientErrorException.getMessage()))
 				.type(MediaType.APPLICATION_JSON)
 				.build();
 	}

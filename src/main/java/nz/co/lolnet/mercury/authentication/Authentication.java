@@ -28,6 +28,7 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.util.StringUtil;
 
 import com.google.gson.Gson;
@@ -37,8 +38,8 @@ import com.google.gson.JsonParser;
 import nz.co.lolnet.mercury.Mercury;
 import nz.co.lolnet.mercury.entries.Account;
 import nz.co.lolnet.mercury.entries.Data;
-import nz.co.lolnet.mercury.util.JsonResponse;
 import nz.co.lolnet.mercury.util.LogHelper;
+import nz.co.lolnet.mercury.util.MercuryUtil;
 
 public class Authentication {
 	
@@ -47,27 +48,31 @@ public class Authentication {
 	
 	public Response checkAuthentication(String request, List<String> permissions) {
 		try {
+			if (StringUtils.isBlank(request)) {
+				return Response.status(Status.BAD_REQUEST).entity(MercuryUtil.createErrorResponse("Bad Request", "Blank request")).build();
+			}
+			
 			JsonObject jsonObject = new JsonParser().parse(new String(Base64.getUrlDecoder().decode(request), StandardCharsets.UTF_8)).getAsJsonObject();
 			Data data = new Gson().fromJson(jsonObject, Data.class);
 			
 			if (data == null) {
-				return Response.status(Status.BAD_REQUEST).entity(JsonResponse.error("Bad Request", "Invalid data!")).build();
+				return Response.status(Status.BAD_REQUEST).entity(MercuryUtil.createErrorResponse("Bad Request", "Invalid data")).build();
 			}
 			
 			uniqueId = data.getUniqueId();
 			account = Mercury.getInstance().getConfig().getAccounts().get(getUniqueId());
 			
 			if (getAccount() == null) {
-				return Response.status(Status.BAD_REQUEST).entity(JsonResponse.error("Bad Request", "Supplied UniqueId does not exist!")).build();
+				return Response.status(Status.BAD_REQUEST).entity(MercuryUtil.createErrorResponse("Bad Request", "Supplied UniqueId does not exist")).build();
 			}
 			
-			if (StringUtil.isBlank(data.getMessage())) {
-				return Response.status(Status.BAD_REQUEST).entity(JsonResponse.error("Bad Request", "Request contained no data!")).build();
+			if (StringUtils.isBlank(data.getMessage())) {
+				return Response.status(Status.BAD_REQUEST).entity(MercuryUtil.createErrorResponse("Bad Request", "Request contained no data")).build();
 			}
 			
 			jsonObject = new JsonParser().parse(doDecrypt(data.getMessage())).getAsJsonObject();
 			if (jsonObject == null || !jsonObject.has("creationTime") || !isRequestValid(jsonObject.remove("creationTime").getAsLong())) {
-				return Response.status(Status.FORBIDDEN).entity(JsonResponse.error("Forbidden", "Request could not be validated!")).build();
+				return Response.status(Status.FORBIDDEN).entity(MercuryUtil.createErrorResponse("Forbidden", "Request could not be validated")).build();
 			}
 			
 			if (jsonObject.size() != 0) {
@@ -78,7 +83,7 @@ public class Authentication {
 			LogHelper.error("Encountered an error processing 'checkAuthentication' in '" + getClass().getSimpleName() + "' - " + ex.getMessage());
 			ex.printStackTrace();
 		}
-		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(JsonResponse.error("Internal Server Error", "An error occurred during authentication!")).build();
+		return Response.status(Status.INTERNAL_SERVER_ERROR).entity(MercuryUtil.createErrorResponse("Internal Server Error", "An error occurred during authentication!")).build();
 	}
 	
 	private boolean isRequestValid(long creationTime) {
@@ -130,9 +135,13 @@ public class Authentication {
 	
 	private String doEncrypt(String decrypted, String password) {
 		try {
+			if (StringUtils.isAnyBlank(decrypted, password)) {
+				return null;
+			}
+			
 			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
 			
-			byte[] input = new String(decrypted).getBytes(StandardCharsets.UTF_8);
+			byte[] input = decrypted.getBytes(StandardCharsets.UTF_8);
 			byte[] secret = getSecret(password.toCharArray());
 			byte[] ivBytes = cipher.getParameters().getParameterSpec(IvParameterSpec.class).getIV();
 			
@@ -155,6 +164,10 @@ public class Authentication {
 	
 	private String doDecrypt(String encrypted, String password) {
 		try {
+			if (StringUtils.isAnyBlank(encrypted, password)) {
+				return null;
+			}
+			
 			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
 			
 			byte[] input = Base64.getDecoder().decode(encrypted);

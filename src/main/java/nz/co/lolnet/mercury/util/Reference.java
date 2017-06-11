@@ -16,22 +16,12 @@
 
 package nz.co.lolnet.mercury.util;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-
-public class JsonResponse {
+public class Reference {
 	
-	public static String info(String info, String infoMessage) {
-		JsonObject jsonObject = new JsonObject();
-		jsonObject.addProperty("info", info);
-		jsonObject.addProperty("infoMessage", infoMessage);
-		return new Gson().toJson(jsonObject);
-	}
-	
-	public static String error(String error, String errorMessage) {
-		JsonObject jsonObject = new JsonObject();
-		jsonObject.addProperty("error", error);
-		jsonObject.addProperty("errorMessage", errorMessage);
-		return new Gson().toJson(jsonObject);
-	}
+	public static final String APP_ID = "mercury";
+	public static final String APP_NAME = "Mercury";
+	public static final String APP_VERSION = "0.0.1-ALPHA";
+	public static final String[] AUTHORS = new String[]{"cptwin", "James137137", "LX_Gaming"};
+	public static final String SOURCE = "https://github.com/lolnetnz/Mercury";
+	public static final String WEBSITE = "https://www.lolnet.co.nz";
 }
